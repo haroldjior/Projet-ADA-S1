@@ -1,0 +1,14 @@
+obj/b__test.adb
+obj/b__test.ads
+obj/b__test.ali
+obj/b__test.o
+obj/test.adb.stderr
+obj/test.adb.stdout
+obj/test.ali
+obj/test.bexch
+obj/test.o
+bin/test.exe
+obj/Gestion_date.o
+obj/gestion_date.adb.stderr
+obj/gestion_date.adb.stdout
+obj/gestion_date.ali
