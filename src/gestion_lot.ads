@@ -1,3 +1,5 @@
+with gestion_date; use gestion_date;
+
 package gestion_lot is
 
    --Nombre maximum de lots
@@ -13,12 +15,32 @@ package gestion_lot is
       num_lot  : integer;
       produit  : T_produit;
       date_fab : T_date;
-      stock    : integer;
+      stock    : integer;   -- = -1 si T_lot vide
       nb_vendu : integer;
       prix_ex  : integer;
    end record;
 
    --Tableau de T_lot de taille nb_lot
+   --si case vide alors stock = -1
    type T_tab_lot is array (integer range 1 .. nb_lot) of T_lot;
+
+   --Initialisation à 0 du tableau de lot
+   procedure init_tab_lot (tab_lot : in out T_tab_lot);
+
+   --Saisie d'un lot
+   procedure saisie_lot
+     (tab_lot     : in out T_tab_lot;
+      date        : in out T_date;
+      tab_mois    : in out T_tab_mois;
+      max_num_lot : in out integer);
+
+   --Supression d'un lot basé sur son numéro de lot
+   procedure sup_lot_num (tab_lot : in out T_tab_lot);
+
+   --Suppression de tous les lots d'une certaine date de fabrication
+   procedure sup_lot_date
+     (tab_lot  : in out T_tab_lot;
+      date     : out T_date;
+      tab_mois : in out T_tab_mois);
 
 end gestion_lot;

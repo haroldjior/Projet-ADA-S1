@@ -26,7 +26,7 @@ package gestion_date is
 
    --Record pour le format de date
    type T_date is record
-      jour  : integer range 1 .. 31;
+      jour  : integer;
       mois  : T_liste_mois;
       annee : positive;
    end record;

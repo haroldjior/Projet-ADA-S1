@@ -33,7 +33,6 @@ package body gestion_date is
    begin
       loop
          --Saisie de la date
-         put_line ("Entrer la date du jour");
          put ("Jour : ");
          get (date.jour);
          skip_line;
@@ -59,7 +58,7 @@ package body gestion_date is
          end if;
 
          --Verification de la validité de la date saisie
-         if date.jour <= tab_mois (T_liste_mois'pos (date.mois) + 1).nb_jour
+         if (date.jour <= tab_mois (T_liste_mois'pos (date.mois) + 1).nb_jour)
          then
             valide := true;
          end if;
