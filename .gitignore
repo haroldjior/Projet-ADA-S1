@@ -12,3 +12,4 @@ obj/Gestion_date.o
 obj/gestion_date.adb.stderr
 obj/gestion_date.adb.stdout
 obj/gestion_date.ali
+.vscode/settings.json
