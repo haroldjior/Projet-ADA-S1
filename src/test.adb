@@ -9,15 +9,4 @@ procedure test is
    max_num_lot    : integer := 0;
 begin
    ini_tab_mois (tab_mois, liste_mois);
-   init_tab_lot (tab_lot);
-   saisie_lot (tab_lot, date, tab_mois, max_num_lot);
-   for i in tab_lot'range loop
-      put (tab_lot (i).stock);
-      put (tab_lot (i).num_lot);
-   end loop;
-   sup_lot_date (tab_lot, date_sup, tab_mois);
-   for i in tab_lot'range loop
-      put (tab_lot (i).stock);
-      put (tab_lot (i).num_lot);
-   end loop;
 end test;
