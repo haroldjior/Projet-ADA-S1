@@ -26,15 +26,20 @@ package gestion_lot is
    --Initialisation à 0 du tableau de lot
    procedure init_tab_lot (tab_lot : in out T_tab_lot);
 
+   --Saisie d'un produit dans un lot
+   procedure saisie_produit (produit : in out T_produit);
+
    --Affichage de la nature du produit d'un lot
    procedure affichage_produit (lot : in T_lot);
 
    --Saisie d'un lot
    procedure saisie_lot
-     (tab_lot     : in out T_tab_lot;
-      date        : in out T_date;
-      tab_mois    : in out T_tab_mois;
-      max_num_lot : in out integer);
+     (tab_lot  : in out T_tab_lot;
+      date     : in out T_date;
+      tab_mois : in out T_tab_mois);
+
+   --Affichage d'un lot
+   procedure affichage_lot (lot : in T_lot);
 
    --Supression d'un lot basé sur son numéro de lot
    procedure sup_lot_num (tab_lot : in out T_tab_lot);
@@ -46,6 +51,9 @@ package gestion_lot is
       tab_mois : in out T_tab_mois);
 
    --Visualisation du registre des lots
-   procedure visu_lot (tab_lot : in T_tab_lot);
+   procedure visu_tab_lot (tab_lot : in T_tab_lot);
+
+   --Visualisation des lots pour un produit donné
+   procedure visu_lot_produit (tab_lot : in T_tab_lot; produit : in T_produit);
 
 end gestion_lot;

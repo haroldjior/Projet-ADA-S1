@@ -1,3 +1,4 @@
+with gestion_lot;
 with ada.text_io,
      ada.integer_text_io,
      ada.characters.handling,
@@ -26,6 +27,34 @@ package body gestion_lot is
       end loop;
    end init_tab_lot;
 
+   --Saisie d'un produit dans un lot
+   procedure saisie_produit (produit : in out T_produit) is
+      s      : string (1 .. 14);
+      k      : integer;
+      valide : Boolean;
+   begin
+      loop
+         valide := true;
+         put ("Type de produit : ");
+         get_line (s, k);
+         if to_lower (s (1 .. k)) = "lait tonique" then
+            produit := T_produit'val (0);
+         elsif to_lower (s (1 .. k)) = "demaquillant" then
+            produit := T_produit'val (1);
+         elsif to_lower (s (1 .. k)) = "creme visage" then
+            produit := T_produit'val (2);
+         elsif to_lower (s (1 .. k)) = "gel douche" then
+            produit := T_produit'val (3);
+         elsif to_lower (s (1 .. k)) = "lait corporel" then
+            produit := T_produit'val (4);
+         else
+            valide := false;
+            Put_Line ("/!\ Nom de produit invalide");
+         end if;
+         exit when valide;
+      end loop;
+   end saisie_produit;
+
    --Affichage de la nature du produit d'un T_lot
    procedure affichage_produit (lot : in T_lot) is
    begin
@@ -44,10 +73,9 @@ package body gestion_lot is
 
    --Saisie d'un lot
    procedure saisie_lot
-     (tab_lot     : in out T_tab_lot;
-      date        : in out T_date;
-      tab_mois    : in out T_tab_mois;
-      max_num_lot : in out integer)
+     (tab_lot  : in out T_tab_lot;
+      date     : in out T_date;
+      tab_mois : in out T_tab_mois)
    is
       s      : string (1 .. 14);
       k, x   : integer;
@@ -69,7 +97,7 @@ package body gestion_lot is
       if trouve then
 
          --Recherche du plus haut numéro de lot
-         lot := tab_lot'First.num_lot;
+         lot := tab_lot (1).num_lot;
          for i in tab_lot'range loop
             if tab_lot (i).num_lot > lot then
                lot := tab_lot (i).num_lot;
@@ -80,33 +108,7 @@ package body gestion_lot is
          tab_lot (x).num_lot := lot + 1;
 
          --Saisie du type de produit
-         loop
-            valide := true;
-            put ("Type de produit : ");
-            get_line (s, k);
-            if (to_lower (s (1 .. k)) = "lait tonique")
-              or (to_lower (s (1 .. k)) = "demaquillant")
-              or (to_lower (s (1 .. k)) = "creme visage")
-              or (to_lower (s (1 .. k)) = "gel douche")
-              or (to_lower (s (1 .. k)) = "lait corporel")
-            then
-               if to_lower (s (1 .. k)) = "lait tonique" then
-                  tab_lot (x).produit := T_produit'val (0);
-               elsif to_lower (s (1 .. k)) = "demaquillant" then
-                  tab_lot (x).produit := T_produit'val (1);
-               elsif to_lower (s (1 .. k)) = "creme visage" then
-                  tab_lot (x).produit := T_produit'val (2);
-               elsif to_lower (s (1 .. k)) = "gel douche" then
-                  tab_lot (x).produit := T_produit'val (3);
-               elsif to_lower (s (1 .. k)) = "lait corporel" then
-                  tab_lot (x).produit := T_produit'val (4);
-               end if;
-            else
-               valide := false;
-            end if;
-            exit when valide;
-            Put_Line ("/!\ Nom de produit invalide");
-         end loop;
+         saisie_produit (tab_lot (x).produit);
 
          --Saisie de la date de fabrication
          Put_Line ("Date de fabrication : ");
@@ -193,6 +195,35 @@ package body gestion_lot is
       end loop;
    end sup_lot_num;
 
+   --Affichage d'un lot
+   procedure affichage_lot (lot : in T_lot) is
+      tmp : T_lot;
+   begin
+      put ("Numero de lot : ");
+      put (lot.num_lot, 1);
+      new_line;
+      put ("Nature du produit : ");
+      tmp := lot;
+      affichage_produit (tmp);
+      new_line;
+      put_line ("Date de fabrication :");
+      put (lot.date_fab.jour, 2);
+      put (" ");
+      put (T_liste_mois'image (lot.date_fab.mois));
+      put (" ");
+      put (lot.date_fab.annee, 4);
+      new_line;
+      put ("Nombre d'exemplaires en stock : ");
+      put (lot.stock, 3);
+      new_line;
+      put ("Nombre d'exemplaires vendus : ");
+      put (lot.nb_vendu, 3);
+      new_line;
+      put ("Prix d'un exemplaire : ");
+      put (lot.prix_ex, 2);
+      new_line;
+   end affichage_lot;
+
    --Suppression de tous les lots fabriqués avant une date précise
    procedure sup_lot_date
      (tab_lot  : in out T_tab_lot;
@@ -226,37 +257,31 @@ package body gestion_lot is
    end sup_lot_date;
 
    --Visualisation du registre des lots
-   procedure visu_lot (tab_lot : in T_tab_lot) is
+   procedure visu_tab_lot (tab_lot : in T_tab_lot) is
       tmp : T_lot;
    begin
       for i in tab_lot'range loop
          if tab_lot (i).stock /= -1 then
-            put ("Numero de lot : ");
-            put (tab_lot (i).num_lot, 1);
-            new_line;
-            put ("Nature du produit : ");
             tmp := tab_lot (i);
-            affichage_produit (tmp);
-            new_line;
-            put_line ("Date de fabrication :");
-            put (tab_lot (i).date_fab.jour, 2);
-            put (" ");
-            put (T_liste_mois'image (tab_lot (i).date_fab.mois));
-            put (" ");
-            put (tab_lot (i).date_fab.annee, 4);
-            new_line;
-            put ("Nombre d'exemplaires en stock : ");
-            put (tab_lot (i).stock, 3);
-            new_line;
-            put ("Nombre d'exemplaires vendus : ");
-            put (tab_lot (i).nb_vendu, 3);
-            new_line;
-            put ("Prix d'un exemplaire : ");
-            put (tab_lot (i).prix_ex, 2);
-            new_line;
+            affichage_lot (tmp);
          end if;
-         new_line;
       end loop;
-   end visu_lot;
+   end visu_tab_lot;
+
+   --Visualisation des lots pour un produit donné
+   procedure visu_lot_produit (tab_lot : in T_tab_lot; produit : in T_produit)
+   is
+      prod : T_produit;
+      lot  : T_lot;
+   begin
+      prod := produit;
+      saisie_produit (prod);
+      for i in tab_lot'range loop
+         if (tab_lot (i).stock /= -1) and (tab_lot (i).produit = prod) then
+            lot := tab_lot (i);
+            affichage_lot (lot);
+         end if;
+      end loop;
+   end visu_lot_produit;
 
 end gestion_lot;
