@@ -15,9 +15,9 @@ package gestion_lot is
       num_lot  : integer;
       produit  : T_produit;
       date_fab : T_date;
-      stock    : integer;   -- = -1 si T_lot vide
-      nb_vendu : integer;
-      prix_ex  : integer;
+      stock    : integer;  -- = -1 si T_lot vide
+      nb_vendu : integer;  -- = -1 si T_lot vide
+      prix_ex  : integer;  -- = -1 si T_lot vide
    end record;
 
    --Tableau de T_lot de taille nb_lot

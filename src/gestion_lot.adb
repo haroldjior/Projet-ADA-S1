@@ -15,8 +15,12 @@ package body gestion_lot is
    procedure init_tab_lot (tab_lot : in out T_tab_lot) is
    begin
       for i in tab_lot'range loop
-         tab_lot (i).stock := -1;
          tab_lot (i).num_lot := 0;
+         tab_lot (i).date_fab.jour := 0;
+         tab_lot (i).date_fab.annee := 0;
+         tab_lot (i).stock := -1;
+         tab_lot (i).nb_vendu := -1;
+         tab_lot (i).prix_ex := -1;
       end loop;
    end init_tab_lot;
 
@@ -68,6 +72,9 @@ package body gestion_lot is
          --Saisie de la date de fabrication
          Put_Line ("Date de fabrication : ");
          saisie_date (date, tab_mois);
+         tab_lot (x).date_fab.jour := date.jour;
+         tab_lot (x).date_fab.mois := date.mois;
+         tab_lot (x).date_fab.annee := date.annee;
 
          --Saisie du stock initial
          put ("Initialisation du stock : ");
@@ -111,13 +118,25 @@ package body gestion_lot is
       put ("Date de fabrication : ");
       saisie_date (date, tab_mois);
       for i in tab_lot'range loop
-         if (tab_lot (i).date_fab.annee <= date.annee)
-           and then (T_liste_mois'pos (tab_lot (i).date_fab.mois)
-                     <= T_liste_mois'pos (date.mois))
-           and then (tab_lot (i).date_fab.jour <= date.jour)
-         then
-            tab_lot (i).num_lot := 0;
-            tab_lot (i).stock := -1;
+         if tab_lot (i).stock /= -1 then
+            if tab_lot (i).date_fab.annee < date.annee then
+               tab_lot (i).num_lot := 0;
+               tab_lot (i).stock := -1;
+            elsif tab_lot (i).date_fab.annee = date.annee then
+               if T_liste_mois'pos (tab_lot (i).date_fab.mois)
+                 < T_liste_mois'pos (date.mois)
+               then
+                  tab_lot (i).num_lot := 0;
+                  tab_lot (i).stock := -1;
+               elsif T_liste_mois'pos (tab_lot (i).date_fab.mois)
+                 = T_liste_mois'pos (date.mois)
+               then
+                  if tab_lot (i).date_fab.jour < date.jour then
+                     tab_lot (i).num_lot := 0;
+                     tab_lot (i).stock := -1;
+                  end if;
+               end if;
+            end if;
          end if;
       end loop;
    end sup_lot_date;
