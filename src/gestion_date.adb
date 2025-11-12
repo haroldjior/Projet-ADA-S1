@@ -1,4 +1,5 @@
-with ada.text_io, ada.integer_text_io; use ada.text_io, ada.integer_text_io;
+with ada.text_io, ada.integer_text_io, ada.IO_Exceptions;
+use ada.text_io, ada.integer_text_io;
 
 package body gestion_date is
 
@@ -32,21 +33,59 @@ package body gestion_date is
       valide : Boolean := false;
    begin
       loop
-         --Saisie de la date
-         put ("Jour : ");
-         get (date.jour);
-         skip_line;
-         put ("Mois : ");
-         get_line (s, k);
-         d := T_liste_mois'value (s (1 .. k));
-         for i in T_liste_mois loop
-            if d = i then
-               date.mois := i;
-            end if;
+
+         --Saisie de la date, avec gestion d'erreur
+         loop
+            begin
+               put ("Jour : ");
+               get (date.jour);
+               skip_line;
+               exit when date.jour'Valid;
+            exception
+               when Constraint_Error =>
+                  Skip_Line;
+                  put_line
+                    ("/!\ Jour invalide, veuillez entrer un entier compris entre 1 et 31");
+               when ada.IO_Exceptions.Data_Error =>
+                  skip_line;
+                  put_line ("/!\ Jour invalide, veuillez entrer un entier");
+            end;
          end loop;
-         put ("Annee : ");
-         get (date.annee);
-         skip_line;
+         loop
+            begin
+               put ("Mois : ");
+               get_line (s, k);
+               d := T_liste_mois'value (s (1 .. k));
+               for i in T_liste_mois loop
+                  if d = i then
+                     date.mois := i;
+                  end if;
+               end loop;
+               exit when date.mois'Valid;
+            exception
+               when Constraint_Error =>
+                  skip_line;
+                  Put_Line
+                    ("/!\ Mois invalide, veuillez entrer un nom de mois valide");
+            end;
+         end loop;
+         loop
+            begin
+               put ("Annee : ");
+               get (date.annee);
+               skip_line;
+               exit when date.annee'Valid;
+            exception
+               when ada.IO_Exceptions.Data_Error =>
+                  skip_line;
+                  Put_Line
+                    ("/!\ Annee invalide, veuillez entrer un entier positif");
+               when Constraint_Error =>
+                  skip_line;
+                  Put_Line
+                    ("/!\ Annee invalide, veuillez entrer un entier positif");
+            end;
+         end loop;
 
          --Initialisation du nb de jour du mois de fevrier en fonction de l'annee
          if ((date.annee mod 4 = 0) and (date.annee mod 400 = 0))
@@ -63,7 +102,10 @@ package body gestion_date is
             valide := true;
          end if;
          exit when valide;
-         Put_Line ("La date saisie est invalide");
+         Put ("La date saisie est invalide, pas de 29 fevrier pour l'annee ");
+         put (date.annee, 4);
+         put_line (" !");
+         Put_Line ("Veuillez entrer une date valide :");
       end loop;
    end saisie_date;
 

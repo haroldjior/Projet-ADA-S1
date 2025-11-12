@@ -17,17 +17,16 @@ package gestion_lot is
       date_fab : T_date;
       stock    : integer;  -- = -1 si T_lot vide
       nb_vendu : integer;  -- = -1 si T_lot vide
-      prix_ex  : integer;  -- = -1 si T_lot vide
+      prix_ex  : Integer;  -- = -1 si T_lot vide
    end record;
 
    --Tableau de T_lot de taille nb_lot
-   --si case vide alors stock = -1
    type T_tab_lot is array (integer range 1 .. nb_lot) of T_lot;
 
    --Initialisation à 0 du tableau de lot
    procedure init_tab_lot (tab_lot : in out T_tab_lot);
 
-   --Affichage de la nature du produit d'un T_lot
+   --Affichage de la nature du produit d'un lot
    procedure affichage_produit (lot : in T_lot);
 
    --Saisie d'un lot
@@ -40,7 +39,7 @@ package gestion_lot is
    --Supression d'un lot basé sur son numéro de lot
    procedure sup_lot_num (tab_lot : in out T_tab_lot);
 
-   --Suppression de tous les lots d'une certaine date de fabrication
+   --Suppression de tous les lots fabriqués avant une date précise
    procedure sup_lot_date
      (tab_lot  : in out T_tab_lot;
       date     : out T_date;

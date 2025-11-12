@@ -26,9 +26,9 @@ package gestion_date is
 
    --Record pour le format de date
    type T_date is record
-      jour  : integer;
+      jour  : integer range 1 .. 31;
       mois  : T_liste_mois;
-      annee : Integer;
+      annee : Positive;
    end record;
 
    --Procedure d'initialisation du tableau T_tab_mois sans la particularité du mois de fevrier qui est fait dans la procedure saisie_date
