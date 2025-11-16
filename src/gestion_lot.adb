@@ -1,4 +1,3 @@
-with gestion_lot;
 with ada.text_io,
      ada.integer_text_io,
      ada.characters.handling,
@@ -56,18 +55,18 @@ package body gestion_lot is
    end saisie_produit;
 
    --Affichage de la nature du produit d'un T_lot
-   procedure affichage_produit (lot : in T_lot) is
+   procedure affichage_produit (produit : in T_produit) is
    begin
-      if lot.produit = T_produit'val (0) then
-         put ("Lait tonique");
-      elsif lot.produit = T_produit'val (1) then
-         put ("Demaquillant");
-      elsif lot.produit = T_produit'val (2) then
-         put ("Creme visage");
-      elsif lot.produit = T_produit'val (3) then
-         put ("Gel douche");
-      elsif lot.produit = T_produit'val (4) then
-         put ("Lait corporel");
+      if produit = T_produit'val (0) then
+         Put_Line ("Lait tonique");
+      elsif produit = T_produit'val (1) then
+         Put_Line ("Demaquillant");
+      elsif produit = T_produit'val (2) then
+         Put_Line ("Creme visage");
+      elsif produit = T_produit'val (3) then
+         Put_Line ("Gel douche");
+      elsif produit = T_produit'val (4) then
+         Put_Line ("Lait corporel");
       end if;
    end affichage_produit;
 
@@ -80,21 +79,24 @@ package body gestion_lot is
       s      : string (1 .. 14);
       k, x   : integer;
       n      : integer := 1;
-      trouve : boolean := false;
+      trouve : Integer := -1; -- -1 par défaut, 1 si trouvé, 0 si pas trouvé
       valide : boolean;
       lot    : integer;
    begin
 
       --Recherche de la première case vide du tab_lot
-      while not (trouve) loop
+      while trouve = -1 loop
+         if n > nb_lot then
+            trouve := 0;
+         end if;
          if tab_lot (n).stock = -1 then
-            trouve := true;
+            trouve := 1;
             x := n;
          end if;
          n := n + 1;
       end loop;
 
-      if trouve then
+      if trouve = 1 then
 
          --Recherche du plus haut numéro de lot
          lot := tab_lot (1).num_lot;
@@ -160,7 +162,7 @@ package body gestion_lot is
                     ("/!\ Valeur de prix invalide, veuillez entrer un entier positif");
             end;
          end loop;
-      else
+      elsif trouve = 0 then
          put_line ("Nombre de lots maximum atteint");
       end if;
 
@@ -197,15 +199,14 @@ package body gestion_lot is
 
    --Affichage d'un lot
    procedure affichage_lot (lot : in T_lot) is
-      tmp : T_lot;
+      tmp : T_produit;
    begin
       put ("Numero de lot : ");
       put (lot.num_lot, 1);
       new_line;
       put ("Nature du produit : ");
-      tmp := lot;
+      tmp := lot.produit;
       affichage_produit (tmp);
-      new_line;
       put_line ("Date de fabrication :");
       put (lot.date_fab.jour, 2);
       put (" ");
@@ -283,5 +284,42 @@ package body gestion_lot is
          end if;
       end loop;
    end visu_lot_produit;
+
+   --Visualisation des produits manquants en stock
+   procedure visu_produit_manquant (tab_lot : in T_tab_lot) is
+      tmp      : integer;
+      en_stock : boolean;
+      type T_r_visu is record
+         visu_prod  : T_produit;
+         visu_stock : boolean;
+      end record;
+      type T_tab_visu is
+        array (integer
+                 range T_produit'pos (T_produit'first)
+                       .. T_produit'pos (T_produit'Last))
+        of T_r_visu;
+      tab_visu : T_tab_visu;
+   begin
+      --Initialisation du T_tab_visu
+      for i in tab_visu'range loop
+         tab_visu (i).visu_prod := T_produit'val (i);
+         tab_visu (i).visu_stock := false;
+      end loop;
+
+      --Mise a jour du T_tab_visu en fonction est produit en stock
+      for i in tab_lot'range loop
+         if tab_lot (i).stock /= -1 then
+            tab_visu (T_produit'pos (tab_lot (i).produit)).visu_stock := true;
+         end if;
+      end loop;
+
+      --Affichage des produits manquants en stock
+      Put_Line ("Produits manquants en stock : ");
+      for i in tab_visu'range loop
+         if not tab_visu (i).visu_stock then
+            affichage_produit (tab_visu (i).visu_prod);
+         end if;
+      end loop;
+   end visu_produit_manquant;
 
 end gestion_lot;

@@ -100,12 +100,20 @@ package body gestion_date is
          if (date.jour <= tab_mois (T_liste_mois'pos (date.mois) + 1).nb_jour)
          then
             valide := true;
+         elsif (date.mois = T_liste_mois'val (1)) and (date.jour = 29) then
+            Put
+              ("La date saisie est invalide, pas de 29 fevrier pour l'annee ");
+            put (date.annee, 4);
+            Put_Line ("Veuillez entrer une date valide :");
+         else
+            Put ("La date saisie est invalide, pas de ");
+            put (date.jour, 2);
+            put (" pour le mois de ");
+            put (T_liste_mois'image (date.mois));
+            New_Line;
+            Put_Line ("Veuillez entrer une date valide :");
          end if;
          exit when valide;
-         Put ("La date saisie est invalide, pas de 29 fevrier pour l'annee ");
-         put (date.annee, 4);
-         put_line (" !");
-         Put_Line ("Veuillez entrer une date valide :");
       end loop;
    end saisie_date;
 
