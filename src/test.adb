@@ -10,13 +10,5 @@ procedure test is
 begin
    ini_tab_mois (tab_mois, liste_mois);
    init_tab_lot (tab_lot);
-   saisie_lot (tab_lot, date, tab_mois);
-   visu_tab_lot (tab_lot);
-   saisie_lot (tab_lot, date, tab_mois);
-   visu_tab_lot (tab_lot);
-   saisie_lot (tab_lot, date, tab_mois);
-   visu_tab_lot (tab_lot);
-   saisie_lot (tab_lot, date, tab_mois);
-   visu_tab_lot (tab_lot);
-   saisie_lot (tab_lot, date, tab_mois);
+   saisie_date (date, tab_mois);
 end test;

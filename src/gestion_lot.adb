@@ -78,7 +78,7 @@ package body gestion_lot is
    is
       s      : string (1 .. 14);
       k, x   : integer;
-      n      : integer := 1;
+      n      : integer := 0;
       trouve : Integer := -1; -- -1 par défaut, 1 si trouvé, 0 si pas trouvé
       valide : boolean;
       lot    : integer;
@@ -86,14 +86,15 @@ package body gestion_lot is
 
       --Recherche de la première case vide du tab_lot
       while trouve = -1 loop
+         n := n + 1;
          if n > nb_lot then
             trouve := 0;
+            exit;
          end if;
          if tab_lot (n).stock = -1 then
             trouve := 1;
             x := n;
          end if;
-         n := n + 1;
       end loop;
 
       if trouve = 1 then
@@ -272,8 +273,9 @@ package body gestion_lot is
    --Visualisation des lots pour un produit donné
    procedure visu_lot_produit (tab_lot : in T_tab_lot; produit : in T_produit)
    is
-      prod : T_produit;
-      lot  : T_lot;
+      prod     : T_produit;
+      lot      : T_lot;
+      en_stock : Boolean := True;
    begin
       prod := produit;
       saisie_produit (prod);
@@ -281,8 +283,13 @@ package body gestion_lot is
          if (tab_lot (i).stock /= -1) and (tab_lot (i).produit = prod) then
             lot := tab_lot (i);
             affichage_lot (lot);
+         else
+            en_stock := False;
          end if;
       end loop;
+      if not en_stock then
+         put_line ("Produit non en stock");
+      end if;
    end visu_lot_produit;
 
    --Visualisation des produits manquants en stock
