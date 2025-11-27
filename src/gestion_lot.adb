@@ -26,6 +26,16 @@ package body gestion_lot is
       end loop;
    end init_tab_lot;
 
+   --Initialisation du tableau des capacités de production
+   procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod) is
+   begin
+      tab_capa_prod (T_produit'val (0)) := 10;
+      tab_capa_prod (T_produit'val (1)) := 8;
+      tab_capa_prod (T_produit'val (2)) := 12;
+      tab_capa_prod (T_produit'val (3)) := 10;
+      tab_capa_prod (T_produit'val (4)) := 12;
+   end init_tab_capa_prod;
+
    --Saisie d'un produit dans un lot
    procedure saisie_produit (produit : in out T_produit) is
       s      : string (1 .. 14);
@@ -72,9 +82,10 @@ package body gestion_lot is
 
    --Saisie d'un lot
    procedure saisie_lot
-     (tab_lot  : in out T_tab_lot;
-      date     : in out T_date;
-      tab_mois : in out T_tab_mois)
+     (tab_lot       : in out T_tab_lot;
+      date          : in out T_date;
+      tab_mois      : in out T_tab_mois;
+      tab_capa_prod : in out T_tab_capa_prod)
    is
       s      : string (1 .. 14);
       k, x   : integer;
@@ -120,27 +131,9 @@ package body gestion_lot is
          tab_lot (x).date_fab.mois := date.mois;
          tab_lot (x).date_fab.annee := date.annee;
 
-         --Saisie du stock initial
-         loop
-            begin
-               put ("Initialisation du stock : ");
-               get (tab_lot (x).stock);
-               skip_line;
-               exit when tab_lot (x).stock > 0;
-               if tab_lot (x).stock = 0 then
-                  Put_Line
-                    ("/!\ Vous ne pouvez pas intialiser les stocks à 0");
-               elsif tab_lot (x).stock < 0 then
-                  Put_Line
-                    ("/!\ Valeur de stock invalide, veuillez entrer un entier positif");
-               end if;
-            exception
-               when ada.IO_Exceptions.Data_Error =>
-                  skip_line;
-                  Put_Line
-                    ("/!\ Valeur de stock invalide, veuillez entrer un entier positif");
-            end;
-         end loop;
+         --Initialisation du stock en fonction de la capacité de production
+         tab_lot (x).stock := tab_capa_prod (tab_lot (x).produit);
+         put (tab_capa_prod (tab_lot (x).produit));
 
          --Initialisation du nombre d'exemplaires vendus
          tab_lot (x).nb_vendu := 0;
@@ -257,6 +250,42 @@ package body gestion_lot is
          end if;
       end loop;
    end sup_lot_date;
+
+   --Modification des capacités de produciton
+   procedure modif_capa_prod (tab_capa_prod : in out T_tab_capa_prod) is
+      produit : T_produit;
+      nv_capa : Natural;
+      trouve  : Boolean := false;
+      indice  : integer := 0;
+   begin
+      saisie_produit (produit);
+      for i in tab_capa_prod'range loop
+         if i = produit then
+            indice := T_produit'pos (i);
+            trouve := true;
+         end if;
+      end loop;
+      if trouve then
+         loop
+            begin
+               put ("Nouvelle capacite de production : ");
+               get (nv_capa);
+               skip_line;
+               tab_capa_prod (T_produit'val (indice)) := nv_capa;
+               exit when nv_capa'Valid;
+            exception
+               when ada.IO_Exceptions.Data_Error =>
+                  skip_line;
+                  put_line ("/!\ Entree invalide");
+               when Constraint_Error =>
+                  skip_line;
+                  put_line ("/!\ Entree invalide");
+            end;
+         end loop;
+      else
+         put_line ("Aucun lot existant de ce type de produit");
+      end if;
+   end modif_capa_prod;
 
    --Visualisation du registre des lots
    procedure visu_tab_lot (tab_lot : in T_tab_lot) is

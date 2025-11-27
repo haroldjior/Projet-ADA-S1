@@ -23,8 +23,13 @@ package gestion_lot is
    --Tableau de T_lot de taille nb_lot
    type T_tab_lot is array (integer range 1 .. nb_lot) of T_lot;
 
+   type T_tab_capa_prod is array (T_produit) of integer;
+
    --Initialisation à 0 du tableau de lot, à utiliser systématiquement au début du main
    procedure init_tab_lot (tab_lot : in out T_tab_lot);
+
+   --Initialisation du tableau des capacités de production
+   procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod);
 
    --Saisie d'un produit dans un lot
    procedure saisie_produit (produit : in out T_produit);
@@ -34,9 +39,10 @@ package gestion_lot is
 
    --Saisie d'un lot
    procedure saisie_lot
-     (tab_lot  : in out T_tab_lot;
-      date     : in out T_date;
-      tab_mois : in out T_tab_mois);
+     (tab_lot       : in out T_tab_lot;
+      date          : in out T_date;
+      tab_mois      : in out T_tab_mois;
+      tab_capa_prod : in out T_tab_capa_prod);
 
    --Affichage d'un lot, utilisée dans visu_tab_lot et visu_lot_produit
    procedure affichage_lot (lot : in T_lot);
@@ -49,6 +55,9 @@ package gestion_lot is
      (tab_lot  : in out T_tab_lot;
       date     : out T_date;
       tab_mois : in out T_tab_mois);
+
+   --Modification des capacités de produciton
+   procedure modif_capa_prod (tab_capa_prod : in out T_tab_capa_prod);
 
    --Visualisation du registre des lots
    procedure visu_tab_lot (tab_lot : in T_tab_lot);
