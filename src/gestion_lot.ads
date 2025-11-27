@@ -3,7 +3,7 @@ with gestion_date; use gestion_date;
 package gestion_lot is
 
    --Nombre maximum de lots
-   nb_lot : constant := 4;
+   nb_lot : constant := 7;
 
    --Type énuméré de la liste des produits
    --LT = Lait tonique; D = Démaquillant; CV = Crème visage; GD = Gel douche; LC = Lait corporel
@@ -23,13 +23,13 @@ package gestion_lot is
    --Tableau de T_lot de taille nb_lot
    type T_tab_lot is array (integer range 1 .. nb_lot) of T_lot;
 
-   --Initialisation à 0 du tableau de lot
+   --Initialisation à 0 du tableau de lot, à utiliser systématiquement au début du main
    procedure init_tab_lot (tab_lot : in out T_tab_lot);
 
    --Saisie d'un produit dans un lot
    procedure saisie_produit (produit : in out T_produit);
 
-   --Affichage de la nature du produit d'un lot
+   --Affichage de la nature du produit d'un lot, utilisée dans affichage_lot et visu_produit_manquant
    procedure affichage_produit (produit : in T_produit);
 
    --Saisie d'un lot
@@ -38,7 +38,7 @@ package gestion_lot is
       date     : in out T_date;
       tab_mois : in out T_tab_mois);
 
-   --Affichage d'un lot
+   --Affichage d'un lot, utilisée dans visu_tab_lot et visu_lot_produit
    procedure affichage_lot (lot : in T_lot);
 
    --Supression d'un lot basé sur son numéro de lot

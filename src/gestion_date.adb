@@ -56,6 +56,7 @@ package body gestion_date is
                put ("Mois : ");
                get_line (s, k);
                d := T_liste_mois'value (s (1 .. k));
+               put (T_liste_mois'image (d));
                for i in T_liste_mois loop
                   if d = i then
                      date.mois := i;
