@@ -6,7 +6,7 @@ package gestion_lot is
    nb_lot : constant := 7;
 
    --Type énuméré de la liste des produits
-   --LT = Lait tonique; D = Démaquillant; CV = Crème visage; GD = Gel douche; LC = Lait corporel
+   --LT = Lotion tonique; D = Démaquillant; CV = Crème visage; GD = Gel douche; LC = Lait corporel
    type T_produit is (LT, D, CV, GD, LC);
 
    --Record qui lit le numéro de lot, le type de produit du lot, sa date de fabrication,
@@ -28,7 +28,7 @@ package gestion_lot is
    --Initialisation à 0 du tableau de lot, à utiliser systématiquement au début du main
    procedure init_tab_lot (tab_lot : in out T_tab_lot);
 
-   --Initialisation du tableau des capacités de production
+   --Initialisation du tableau des capacités de production, à utiliser systématiquement au début du main
    procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod);
 
    --Saisie d'un produit dans un lot

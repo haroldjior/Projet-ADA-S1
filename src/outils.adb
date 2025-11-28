@@ -10,7 +10,7 @@ package body outils is
 
    begin
       loop
-         put ("saisir votre nom :");
+         put ("Nom du client :");
          get_line (s, k);
          x := 0;
          for i in 1 .. k loop
@@ -24,7 +24,7 @@ package body outils is
             put ("nom valide");
             exit;
          else
-            put ("votre nom n'est pas valide");
+            put ("Le nom du client n'est pas valide");
             new_line;
          end if;
       end loop;

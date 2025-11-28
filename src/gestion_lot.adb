@@ -36,7 +36,7 @@ package body gestion_lot is
       tab_capa_prod (T_produit'val (4)) := 12;
    end init_tab_capa_prod;
 
-   --Saisie d'un produit dans un lot
+   --Saisie d'un produit
    procedure saisie_produit (produit : in out T_produit) is
       s      : string (1 .. 14);
       k      : integer;
@@ -46,7 +46,7 @@ package body gestion_lot is
          valide := true;
          put ("Type de produit : ");
          get_line (s, k);
-         if to_lower (s (1 .. k)) = "lait tonique" then
+         if to_lower (s (1 .. k)) = "lotion tonique" then
             produit := T_produit'val (0);
          elsif to_lower (s (1 .. k)) = "demaquillant" then
             produit := T_produit'val (1);
@@ -68,7 +68,7 @@ package body gestion_lot is
    procedure affichage_produit (produit : in T_produit) is
    begin
       if produit = T_produit'val (0) then
-         Put_Line ("Lait tonique");
+         Put_Line ("Lotion tonique");
       elsif produit = T_produit'val (1) then
          Put_Line ("Demaquillant");
       elsif produit = T_produit'val (2) then
