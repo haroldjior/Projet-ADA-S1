@@ -1,5 +1,3 @@
-with ada.text_io, ada.integer_text_io; use ada.text_io, ada.integer_text_io;
-
 package outils is
 
    --Type pour le nom du client
@@ -13,5 +11,17 @@ package outils is
 
    --Procedure de saisie du nom du client, avec vérification de sa validité
    procedure saisie_nom_client (C : in out client);
+
+   --Type énuméré de la liste des produits
+   --LT = Lotion tonique; D = Démaquillant; CV = Crème visage; GD = Gel douche; LC = Lait corporel
+   type T_produit is (LT, D, CV, GD, LC);
+
+   --Saisie d'un produit, utilisée dans
+   -- package gestion_lot : saisie_lot, modif_capa_prod, visu_lot_produit
+   procedure saisie_produit (produit : in out T_produit);
+
+   --Affichage de la nature du produit d'un lot, utilisée dans
+   -- package gestion_lot : affichage_lot et visu_produit_manquant
+   procedure affichage_produit (produit : in T_produit);
 
 end outils;

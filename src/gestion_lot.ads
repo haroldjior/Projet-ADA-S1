@@ -1,13 +1,9 @@
-with gestion_date; use gestion_date;
+with gestion_date, outils; use gestion_date, outils;
 
 package gestion_lot is
 
    --Nombre maximum de lots
    nb_lot : constant := 7;
-
-   --Type énuméré de la liste des produits
-   --LT = Lotion tonique; D = Démaquillant; CV = Crème visage; GD = Gel douche; LC = Lait corporel
-   type T_produit is (LT, D, CV, GD, LC);
 
    --Record qui lit le numéro de lot, le type de produit du lot, sa date de fabrication,
    --le nombre d'exemplaires en stock, le nombre d'exemplaires déjà vendus, et le prix d'un exemplaire
@@ -30,12 +26,6 @@ package gestion_lot is
 
    --Initialisation du tableau des capacités de production, à utiliser systématiquement au début du main
    procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod);
-
-   --Saisie d'un produit dans un lot
-   procedure saisie_produit (produit : in out T_produit);
-
-   --Affichage de la nature du produit d'un lot, utilisée dans affichage_lot et visu_produit_manquant
-   procedure affichage_produit (produit : in T_produit);
 
    --Saisie d'un lot
    procedure saisie_lot
