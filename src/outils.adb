@@ -20,7 +20,7 @@ package body outils is
          end loop;
          if x = 0 then
             C.nom_Client := s;
-            put ("nom valide");
+            C.k := k;
             exit;
          else
             put ("Le nom du client n'est pas valide");
@@ -28,6 +28,12 @@ package body outils is
          end if;
       end loop;
    end saisie_nom_client;
+
+   --Affichage d'un nom de client
+   procedure affichage_nom_client (c : in client) is
+   begin
+      put (c.nom_Client (1 .. c.k));
+   end affichage_nom_client;
 
    --Saisie d'un produit, utilisée dans
    -- package gestion_lot : saisie_lot, modif_capa_prod, visu_lot_produit
@@ -63,15 +69,15 @@ package body outils is
    procedure affichage_produit (produit : in T_produit) is
    begin
       if produit = T_produit'val (0) then
-         Put_Line ("Lotion tonique");
+         Put ("Lotion tonique");
       elsif produit = T_produit'val (1) then
-         Put_Line ("Demaquillant");
+         Put ("Demaquillant");
       elsif produit = T_produit'val (2) then
-         Put_Line ("Creme visage");
+         Put ("Creme visage");
       elsif produit = T_produit'val (3) then
-         Put_Line ("Gel douche");
+         Put ("Gel douche");
       elsif produit = T_produit'val (4) then
-         Put_Line ("Lait corporel");
+         Put ("Lait corporel");
       end if;
    end affichage_produit;
 end outils;

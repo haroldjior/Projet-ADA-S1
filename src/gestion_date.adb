@@ -117,4 +117,24 @@ package body gestion_date is
       end loop;
    end saisie_date;
 
+   --Affichage d'une date au format JJ/MM/AAAA
+   procedure affichage_date (date : in T_date) is
+   begin
+      if date.jour < 10 then
+         put ("0");
+         put (date.jour, 1);
+      else
+         put (date.jour, 2);
+      end if;
+      put ("/");
+      if (T_liste_mois'pos (date.mois) + 1) < 10 then
+         put ("0");
+         put (T_liste_mois'pos (date.mois) + 1, 1);
+      else
+         put (T_liste_mois'pos (date.mois) + 1, 2);
+      end if;
+      put ("/");
+      put (date.annee, 4);
+   end affichage_date;
+
 end gestion_date;

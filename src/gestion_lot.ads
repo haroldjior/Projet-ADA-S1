@@ -28,7 +28,7 @@ package gestion_lot is
    procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod);
 
    --Saisie d'un lot
-   procedure saisie_lot
+   procedure nouv_lot
      (tab_lot       : in out T_tab_lot;
       date          : in out T_date;
       tab_mois      : in out T_tab_mois;
@@ -53,7 +53,7 @@ package gestion_lot is
    procedure visu_tab_lot (tab_lot : in T_tab_lot);
 
    --Visualisation des lots pour un produit donné
-   procedure visu_lot_produit (tab_lot : in T_tab_lot; produit : in T_produit);
+   procedure visu_lot_produit (tab_lot : in T_tab_lot);
 
    --Visualisation des produits manquants en stock
    procedure visu_produit_manquant (tab_lot : in T_tab_lot);

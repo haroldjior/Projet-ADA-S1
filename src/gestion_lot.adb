@@ -36,8 +36,33 @@ package body gestion_lot is
       tab_capa_prod (T_produit'val (4)) := 12;
    end init_tab_capa_prod;
 
+   --Affichage d'un lot
+   procedure affichage_lot (lot : in T_lot) is
+      tmp : T_produit;
+   begin
+      put ("Numero de lot : ");
+      put (lot.num_lot, 1);
+      new_line;
+      put ("Nature du produit : ");
+      tmp := lot.produit;
+      affichage_produit (tmp);
+      new_line;
+      put ("Date de fabrication :");
+      affichage_date (lot.date_fab);
+      new_line;
+      put ("Nombre d'exemplaires en stock : ");
+      put (lot.stock, 3);
+      new_line;
+      put ("Nombre d'exemplaires vendus : ");
+      put (lot.nb_vendu, 3);
+      new_line;
+      put ("Prix d'un exemplaire : ");
+      put (lot.prix_ex, 2);
+      new_line;
+   end affichage_lot;
+
    --Saisie d'un lot
-   procedure saisie_lot
+   procedure nouv_lot
      (tab_lot       : in out T_tab_lot;
       date          : in out T_date;
       tab_mois      : in out T_tab_mois;
@@ -89,7 +114,6 @@ package body gestion_lot is
 
          --Initialisation du stock en fonction de la capacité de production
          tab_lot (x).stock := tab_capa_prod (tab_lot (x).produit);
-         put (tab_capa_prod (tab_lot (x).produit));
 
          --Initialisation du nombre d'exemplaires vendus
          tab_lot (x).nb_vendu := 0;
@@ -112,11 +136,13 @@ package body gestion_lot is
                     ("/!\ Valeur de prix invalide, veuillez entrer un entier positif");
             end;
          end loop;
+         new_line;
+         put_line ("Lot ajoute avec succes !");
       elsif trouve = 0 then
          put_line ("Nombre de lots maximum atteint");
       end if;
 
-   end saisie_lot;
+   end nouv_lot;
 
    --Supression d'un lot basé sur son numéro de lot
    procedure sup_lot_num (tab_lot : in out T_tab_lot) is
@@ -147,41 +173,12 @@ package body gestion_lot is
       end loop;
    end sup_lot_num;
 
-   --Affichage d'un lot
-   procedure affichage_lot (lot : in T_lot) is
-      tmp : T_produit;
-   begin
-      put ("Numero de lot : ");
-      put (lot.num_lot, 1);
-      new_line;
-      put ("Nature du produit : ");
-      tmp := lot.produit;
-      affichage_produit (tmp);
-      put_line ("Date de fabrication :");
-      put (lot.date_fab.jour, 2);
-      put (" ");
-      put (T_liste_mois'image (lot.date_fab.mois));
-      put (" ");
-      put (lot.date_fab.annee, 4);
-      new_line;
-      put ("Nombre d'exemplaires en stock : ");
-      put (lot.stock, 3);
-      new_line;
-      put ("Nombre d'exemplaires vendus : ");
-      put (lot.nb_vendu, 3);
-      new_line;
-      put ("Prix d'un exemplaire : ");
-      put (lot.prix_ex, 2);
-      new_line;
-   end affichage_lot;
-
    --Suppression de tous les lots fabriqués avant une date précise
    procedure sup_lot_date
      (tab_lot  : in out T_tab_lot;
       date     : out T_date;
       tab_mois : in out T_tab_mois) is
    begin
-      put ("Date de fabrication : ");
       saisie_date (date, tab_mois);
       for i in tab_lot'range loop
          if tab_lot (i).stock /= -1 then
@@ -256,23 +253,21 @@ package body gestion_lot is
    end visu_tab_lot;
 
    --Visualisation des lots pour un produit donné
-   procedure visu_lot_produit (tab_lot : in T_tab_lot; produit : in T_produit)
-   is
+   procedure visu_lot_produit (tab_lot : in T_tab_lot) is
       prod     : T_produit;
       lot      : T_lot;
-      en_stock : Boolean := True;
+      en_stock : Boolean := false;
    begin
-      prod := produit;
       saisie_produit (prod);
+      new_line;
       for i in tab_lot'range loop
          if (tab_lot (i).stock /= -1) and (tab_lot (i).produit = prod) then
             lot := tab_lot (i);
             affichage_lot (lot);
-         else
-            en_stock := False;
+            en_stock := True;
          end if;
       end loop;
-      if not en_stock then
+      if not (en_stock) then
          put_line ("Produit non en stock");
       end if;
    end visu_lot_produit;
@@ -310,6 +305,7 @@ package body gestion_lot is
       for i in tab_visu'range loop
          if not tab_visu (i).visu_stock then
             affichage_produit (tab_visu (i).visu_prod);
+            new_line;
          end if;
       end loop;
    end visu_produit_manquant;

@@ -31,10 +31,14 @@ package gestion_date is
       annee : Positive;
    end record;
 
-   --Procedure d'initialisation du tableau T_tab_mois sans la particularité du mois de fevrier qui est fait dans la procedure saisie_date
+   --Initialisation du tableau T_tab_mois sans la particularité du mois de fevrier qui est fait dans la procedure saisie_date
    procedure ini_tab_mois
      (tab_mois : in out T_tab_mois; liste_mois : in T_liste_mois);
 
-   --Procedure de saisie d'une date, champ par champ, avec controle de sa validité
+   --Saisie d'une date, champ par champ, avec controle de sa validité
    procedure saisie_date (date : in out T_date; tab_mois : in out T_tab_mois);
+
+   --Affichage d'une date au format JJ/MM/AAAA
+   procedure affichage_date (date : in T_date);
+
 end gestion_date;
