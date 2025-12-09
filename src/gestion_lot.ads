@@ -27,6 +27,9 @@ package gestion_lot is
    --Initialisation du tableau des capacités de production, à utiliser systématiquement au début du main
    procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod);
 
+   --Visualisation du tableau des capacités de production
+   procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_capa_prod);
+
    --Saisie d'un lot
    procedure nouv_lot
      (tab_lot       : in out T_tab_lot;

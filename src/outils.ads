@@ -5,7 +5,7 @@ package outils is
 
    --Record qui lie le nom du client et sa taille
    type client is record
-      nom_Client : T_nom_client;
+      nom_Client : T_nom_client := (others => ' ');
       k          : integer := 0;
    end record;
 

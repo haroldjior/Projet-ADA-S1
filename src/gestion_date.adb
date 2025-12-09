@@ -40,7 +40,7 @@ package body gestion_date is
                put ("Jour : ");
                get (date.jour);
                skip_line;
-               exit when date.jour'Valid;
+               exit when (date.jour'Valid);
             exception
                when Constraint_Error =>
                   Skip_Line;

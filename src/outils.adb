@@ -9,17 +9,35 @@ package body outils is
       k : integer := 0;
       x : integer := 0;
    begin
+
+      --Saisie du nom du client
       loop
-         put ("Nom du client :");
+         put ("Nom du client : ");
          get_line (s, k);
          x := 0;
+
+         --Vérification si le nom commence ou fini par un espace
+         if (s (s'First) = ' ') or (s (s'Last) = ' ') then
+            x := x + 1;
+         end if;
+
+         --Verification si le nom comporte uniquement des lettres, des chiffres ou des espaces
          for i in 1 .. k loop
             if s (i) not in 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | ' ' then
                x := x + 1;
             end if;
+
+            --Verification si le nom ne contient pas deux espaces consécutifs
+            if (s (i) /= s (s'First)) and (s (i) /= s (s'First)) then
+               if (s (i) = ' ') and ((s (i - 1) = ' ') or s (i + 1) = ' ') then
+                  x := x + 1;
+               end if;
+            end if;
          end loop;
+
+         --Enregistrement du nom si il ne contient aucune erreur
          if x = 0 then
-            C.nom_Client := s;
+            C.nom_Client (1 .. k) := s (1 .. k);
             C.k := k;
             exit;
          else

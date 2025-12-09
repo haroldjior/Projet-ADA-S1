@@ -29,12 +29,31 @@ package body gestion_lot is
    --Initialisation du tableau des capacités de production
    procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod) is
    begin
-      tab_capa_prod (T_produit'val (0)) := 10;
-      tab_capa_prod (T_produit'val (1)) := 8;
-      tab_capa_prod (T_produit'val (2)) := 12;
-      tab_capa_prod (T_produit'val (3)) := 10;
-      tab_capa_prod (T_produit'val (4)) := 12;
+      tab_capa_prod (LT) := 10;
+      tab_capa_prod (D) := 8;
+      tab_capa_prod (CV) := 12;
+      tab_capa_prod (GD) := 10;
+      tab_capa_prod (LC) := 12;
    end init_tab_capa_prod;
+
+   procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_capa_prod) is
+   begin
+      put ("Lotion tonique : ");
+      put (tab_capa_prod (LT), 3);
+      new_line;
+      put ("Demaquillant : ");
+      put (tab_capa_prod (D), 3);
+      new_line;
+      put ("Creme visage : ");
+      put (tab_capa_prod (CV), 3);
+      new_line;
+      put ("Gel douche : ");
+      put (tab_capa_prod (GD), 3);
+      new_line;
+      put ("Lait corporel : ");
+      put (tab_capa_prod (LC), 3);
+      new_line;
+   end visu_tab_capa_prod;
 
    --Affichage d'un lot
    procedure affichage_lot (lot : in T_lot) is
@@ -106,11 +125,7 @@ package body gestion_lot is
          saisie_produit (tab_lot (x).produit);
 
          --Saisie de la date de fabrication
-         Put_Line ("Date de fabrication : ");
-         saisie_date (date, tab_mois);
-         tab_lot (x).date_fab.jour := date.jour;
-         tab_lot (x).date_fab.mois := date.mois;
-         tab_lot (x).date_fab.annee := date.annee;
+         tab_lot (x).date_fab := date;
 
          --Initialisation du stock en fonction de la capacité de production
          tab_lot (x).stock := tab_capa_prod (tab_lot (x).produit);
