@@ -137,4 +137,23 @@ package body gestion_date is
       put (date.annee, 4);
    end affichage_date;
 
+   procedure lendemain (date : in out T_date; tab_mois : in T_tab_mois) is
+   begin
+
+      if date.jour = tab_mois (T_liste_mois'pos (date.mois) + 1).nb_jour then
+         date.jour := 1;
+         if date.mois
+           = tab_mois (T_liste_mois'pos (T_liste_mois'last) + 1).mois
+         then
+            date.mois := T_liste_mois'first;
+            date.annee := date.annee + 1;
+         else
+            date.mois := T_liste_mois'val (T_liste_mois'pos (date.mois) + 1);
+         end if;
+      else
+         date.jour := date.jour + 1;
+      end if;
+
+   end lendemain;
+
 end gestion_date;

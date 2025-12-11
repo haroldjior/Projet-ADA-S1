@@ -27,7 +27,7 @@ package body gestion_lot is
    end init_tab_lot;
 
    --Initialisation du tableau des capacités de production
-   procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_capa_prod) is
+   procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_produit) is
    begin
       tab_capa_prod (LT) := 10;
       tab_capa_prod (D) := 8;
@@ -36,7 +36,7 @@ package body gestion_lot is
       tab_capa_prod (LC) := 12;
    end init_tab_capa_prod;
 
-   procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_capa_prod) is
+   procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_produit) is
    begin
       put ("Lotion tonique : ");
       put (tab_capa_prod (LT), 3);
@@ -80,12 +80,36 @@ package body gestion_lot is
       new_line;
    end affichage_lot;
 
+   --Initialisation du tableau de stock, regroupant la totalité des stocks pour chaque produit
+   --utilisée si le fichier de sauvegarde n'existe pas
+   procedure init_tab_stock (tab_stock : in out T_tab_produit) is
+   begin
+      for i in tab_stock'range loop
+         tab_stock (i) := 0;
+      end loop;
+   end init_tab_stock;
+
+   --Mise a jour du tableau de stock, regroupant la totalité des stocks pour chaque produit
+   procedure maj_tab_stock
+     (tab_lot : in T_tab_lot; tab_stock : in out T_tab_produit) is
+   begin
+      for i in tab_lot'range loop
+         for j in T_produit loop
+            if (tab_lot (i).stock /= -1) and then (tab_lot (i).produit = j)
+            then
+               tab_stock (j) := tab_stock (j) + tab_lot (i).stock;
+            end if;
+         end loop;
+      end loop;
+
+   end maj_tab_stock;
+
    --Saisie d'un lot
    procedure nouv_lot
      (tab_lot       : in out T_tab_lot;
       date          : in out T_date;
-      tab_mois      : in out T_tab_mois;
-      tab_capa_prod : in out T_tab_capa_prod)
+      tab_capa_prod : in out T_tab_produit;
+      tab_stock     : in out T_tab_produit)
    is
       s      : string (1 .. 14);
       k, x   : integer;
@@ -152,6 +176,7 @@ package body gestion_lot is
             end;
          end loop;
          new_line;
+         maj_tab_stock (tab_lot, tab_stock);
          put_line ("Lot ajoute avec succes !");
       elsif trouve = 0 then
          put_line ("Nombre de lots maximum atteint");
@@ -220,7 +245,7 @@ package body gestion_lot is
    end sup_lot_date;
 
    --Modification des capacités de produciton
-   procedure modif_capa_prod (tab_capa_prod : in out T_tab_capa_prod) is
+   procedure modif_capa_prod (tab_capa_prod : in out T_tab_produit) is
       produit : T_produit;
       nv_capa : Natural;
       trouve  : Boolean := false;

@@ -1,5 +1,9 @@
-with ada.text_io, ada.integer_text_io, ada.IO_Exceptions, outils;
-use ada.text_io, ada.integer_text_io, outils;
+with ada.text_io,
+     ada.integer_text_io,
+     ada.IO_Exceptions,
+     ada.characters.handling,
+     outils;
+use ada.text_io, ada.integer_text_io, ada.characters.handling, outils;
 
 package body gestion_client is
 
@@ -36,7 +40,8 @@ package body gestion_client is
       --Enregistrement du client dans le registre
       begin
          if not (existe) then
-            A (x).nom_du_Client := c;
+            A (x).nom_du_Client.nom_Client := to_lower (c.nom_Client);
+            A (x).nom_du_Client.k := c.k;
             A (x).nb_com := 0;
             put_line ("Le client a bien ete ajoute");
          else

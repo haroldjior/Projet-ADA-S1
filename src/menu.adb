@@ -1,4 +1,3 @@
-with gestion_client;
 with ada.text_io,
      ada.integer_text_io,
      ada.float_text_io,
@@ -8,7 +7,9 @@ with ada.text_io,
      gestion_date,
      gestion_commande,
      gestion_lot,
-     gestion_client;
+     gestion_client,
+     gestion_sauvegarde,
+     gestion_achat;
 use ada.text_io,
     ada.integer_text_io,
     ada.float_text_io,
@@ -17,23 +18,32 @@ use ada.text_io,
     gestion_date,
     gestion_commande,
     gestion_lot,
-    gestion_client;
+    gestion_client,
+    gestion_sauvegarde,
+    gestion_achat;
 
 procedure menu is
+
    date          : T_date;
    tab_mois      : T_tab_mois;
    liste_mois    : T_liste_mois;
    tab_commande  : T_tab_commande;
-   tab_capa_prod : T_tab_capa_prod;
+   tab_capa_prod : T_tab_produit;
    tab_lot       : T_tab_lot;
    tab_client    : T_tab_client;
+   tab_stock     : T_tab_produit;
 
-   choix, choix_lot1, choix_lot2, choix_lot3, choix_com1, choix_cli1 :
-     Character;
+   choix,
+   choix_lot1,
+   choix_lot2,
+   choix_lot3,
+   choix_com1,
+   choix_cli1,
+   choix_stat,
+   choix_sauv : Character;
 begin
    --Initialisation de ce qui est nécéssaire
    ini_tab_mois (tab_mois, liste_mois);
-   init_tab_com (tab_commande);
    init_tab_capa_prod (tab_capa_prod);
    init_tab_lot (tab_lot);
 
@@ -53,7 +63,7 @@ begin
       put_line ("C : Gestion des commandes et des achats");
       put_line ("D : Statistiques");
       put_line ("E : Sauvegarde/Restauration");
-      put_line ("D : Passage au lendemain");
+      put_line ("F : Passage au lendemain");
       put_line ("Q : Quitter");
       new_line;
       put ("Votre choix : ");
@@ -78,11 +88,11 @@ begin
                skip_line;
                new_line;
                choix_lot1 := to_upper (choix_lot1);
-               exit when choix_lot1 = 'E';
+               exit when choix_lot1 = 'R';
                case choix_lot1 is
                   when 'A'    =>
                      put_line ("===== Nouveau lot =====");
-                     nouv_lot (tab_lot, date, tab_mois, tab_capa_prod);
+                     nouv_lot (tab_lot, date, tab_capa_prod, tab_stock);
                      new_line;
 
                   when 'B'    =>
@@ -137,13 +147,14 @@ begin
                           ("B : Visualisation des lots pour un produit donne");
                         put_line
                           ("C : Visualisation des produits manquants en stock");
-                        put_line ("D : Retour au menu de gestion des lots");
+                        put_line ("R : Retour au menu de gestion des lots");
                         new_line;
                         put ("Votre choix : ");
                         get (choix_lot3);
                         skip_line;
+                        new_line;
                         choix_lot3 := to_upper (choix_lot3);
-                        exit when choix_lot3 = 'D';
+                        exit when choix_lot3 = 'R';
                         case choix_lot3 is
                            when 'A'    =>
                               put_line
@@ -233,6 +244,7 @@ begin
                  ("F : Visualisation de tous les achats realises par un client");
                put_line
                  ("G : Visualisation des clients ayant commandes un produit");
+               put_line ("H : Visualisation de l'archive des achats");
                put_line ("R : Retour au menu principal");
                new_line;
                put ("Votre choix");
@@ -243,7 +255,7 @@ begin
                case choix_com1 is
                   when 'A'    =>
                      put_line ("===== Nouvelle commande =====");
-                     nouv_commande (tab_commande, date);
+                     nouv_commande (tab_commande, date, tab_client);
                      new_line;
 
                   when 'B'    =>
@@ -270,13 +282,18 @@ begin
 
                   when 'F'    =>
                      put_line ("===== Achats realises par un client =====");
-                     put ("/!\ En construction /!\");
+                     visu_achat_client (tab_client);
                      new_line;
 
                   when 'G'    =>
                      put_line
                        ("===== Clients ayant commandes un produit =====");
                      visu_client_commande (tab_commande);
+                     new_line;
+
+                  when 'H'    =>
+                     put_line ("===== Archive des achats =====");
+                     visu_archive_achat;
                      new_line;
 
                   when others =>
@@ -286,13 +303,75 @@ begin
             end loop;
 
          when 'D'    =>
-            null;
+            loop
+               put_line ("===== Statistiques =====");
+               put_line ("A : Chiffre d'affaire");
+               put_line
+                 ("B : Nombre d'exemplaires vendus pour chaque produit");
+               put_line ("C : Durée moyenne entre commande et livraison");
+               put_line ("R : Retour au menu principal");
+               new_line;
+               put ("Votre choix : ");
+               get (choix_stat);
+               skip_line;
+               choix_stat := to_upper (choix_stat);
+               exit when choix_stat = 'R';
+               case choix_stat is
+                  when 'A'    =>
+                     put_line ("===== Chiffre d'affaire =====");
+                     visu_chiffre_affaire (tab_commande);
+                     new_line;
+
+                  when 'B'    =>
+                     put_line ("===== Nombre d'exemplaires vendus =====");
+                     visu_nb_ex_vendu;
+                     new_line;
+
+                  when 'C'    =>
+                     put_line ("===== Duree moyenne de livraison =====");
+                     attente_moy_livraison;
+                     new_line;
+
+                  when others =>
+                     put_line
+                       ("Choix non propose, veuillez choisir une des options disponibles");
+               end case;
+            end loop;
 
          when 'E'    =>
-            null;
+            loop
+               put_line ("===== Sauvegarde / Restauration =====");
+               put_line ("A : Sauvegarde");
+               put_line ("B : Restauration");
+               put_line ("R : Retour au menu principal");
+               new_line;
+               put ("Votre choix : ");
+               get (choix_sauv);
+               skip_line;
+               choix_sauv := to_upper (choix_sauv);
+               exit when choix_sauv = 'R';
+               case choix_sauv is
+                  when 'A'    =>
+                     put_line ("===== Sauvegarde =====");
+                     sauvegarde_donnees
+                       (tab_lot, tab_client, tab_commande, tab_capa_prod);
+                     new_line;
+
+                  when 'B'    =>
+                     put_line ("===== Restauration =====");
+                     restauration
+                       (tab_lot, tab_client, tab_commande, tab_capa_prod);
+                     new_line;
+
+                  when others =>
+                     put_line
+                       ("Choix non propose, veuillez choisir une des options disponibles");
+
+               end case;
+            end loop;
 
          when 'F'    =>
-            null;
+            lendemain (date, tab_mois);
 
          when others =>
             put_line

@@ -3,9 +3,14 @@ with ada.text_io,
      ada.IO_Exceptions,
      gestion_date,
      gestion_client,
+     gestion_lot,
      outils;
-use ada.text_io, ada.integer_text_io, gestion_date, gestion_client, outils;
-
+use ada.text_io,
+    ada.integer_text_io,
+    gestion_date,
+    gestion_client,
+    gestion_lot,
+    outils;
 
 --a faire : finir la procedure nouv_commande, comprendre comment faire la procedure annul_commande
 
@@ -25,7 +30,7 @@ package body gestion_commande is
       new_line;
 
       put_line ("Composition de la commande :");
-      for j in T_tab_compo_com'range loop
+      for j in com.tab_compo_com'range loop
          affichage_produit (j);
          put (" : ");
          put (com.tab_compo_com (j), 3);
@@ -88,14 +93,14 @@ package body gestion_commande is
          tab_commande (x).nom_client := nom_cli;
 
          --Enregistrement de la composition de la commande
-         for i in T_tab_compo_com'range loop
+         for i in T_tab_produit'range loop
             loop
                affichage_produit (i);
                put (" : ");
                begin
                   get (tab_commande (x).tab_compo_com (i));
                   skip_line;
-                  exit when tab_commande (x).tab_compo_com (i) in Natural;
+                  exit when tab_commande (x).tab_compo_com (i)'Valid;
                exception
                   when Constraint_Error =>
                      skip_line;
@@ -165,7 +170,7 @@ package body gestion_commande is
    --Visualisation de tous les clients ayant commandé un produit donné
    procedure visu_client_commande (tab_commande : in T_tab_commande) is
       prod          : T_produit;
-      tab_compo_com : T_tab_compo_com;
+      tab_compo_com : T_tab_produit;
    begin
       saisie_produit (prod);
       put_line ("Clients ayant commandes ce produit :");
