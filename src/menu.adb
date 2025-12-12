@@ -55,17 +55,19 @@ begin
 
    --Menu principal
    loop
-      put_line ("============ Menu ============");
-      put ("Date du jour : ");
+      put_line (" =============== Menu ================");
+      put_line (" _____________________________________");
+      put ("|      Date du jour : ");
       affichage_date (date);
-      new_line;
-      put_line ("A : Gestion des lots");
-      put_line ("B : Gestion des clients");
-      put_line ("C : Gestion des commandes et des achats");
-      put_line ("D : Statistiques");
-      put_line ("E : Sauvegarde/Restauration");
-      put_line ("F : Passage au lendemain");
-      put_line ("Q : Quitter");
+      put_line ("      |");
+      put_line ("| A : Gestion des lots                |");
+      put_line ("| B : Gestion des clients             |");
+      put_line ("| C : Gestion des commandes et achats |");
+      put_line ("| D : Statistiques                    |");
+      put_line ("| E : Sauvegarde/Restauration         |");
+      put_line ("| F : Passage au lendemain            |");
+      put_line ("| Q : Quitter                         |");
+      put_line ("|_____________________________________|");
       new_line;
       put ("Votre choix : ");
       get (choix);
@@ -76,13 +78,15 @@ begin
       case choix is
          when 'A'    =>
             loop
-               put_line ("===== Gestion des lots =====");
-               put_line ("A : Ajout d'un nouveau lot");
-               put_line ("B : Destruction de lot");
-               put_line ("C : Modification des capacites de production");
-               put_line ("D : Visualisation des capacites de production");
-               put_line ("E : Visualisation de lots");
-               put_line ("R : Retour au menu principal");
+               put_line (" =============== Gestion des lots ==============");
+               put_line (" _______________________________________________");
+               put_line ("| A : Ajout d'un nouveau lot                    |");
+               put_line ("| B : Destruction de lot                        |");
+               put_line ("| C : Modification des capacites de production  |");
+               put_line ("| D : Visualisation des capacites de production |");
+               put_line ("| E : Visualisation de lots                     |");
+               put_line ("| R : Retour au menu principal                  |");
+               put_line ("|_______________________________________________|");
                new_line;
                put ("Votre choix : ");
                get (choix_lot1);
@@ -135,9 +139,10 @@ begin
                      new_line;
 
                   when 'D'    =>
-                     put_line
-                       ("===== Visualisation des capacites de production =====");
+                     put_line ("===== Capacites de production =====");
+                     put_line ("        -------------------");
                      visu_tab_capa_prod (tab_capa_prod);
+                     put_line ("        -------------------");
                      new_line;
 
                   when 'E'    =>

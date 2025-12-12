@@ -38,21 +38,25 @@ package body gestion_lot is
 
    procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_produit) is
    begin
-      put ("Lotion tonique : ");
-      put (tab_capa_prod (LT), 3);
-      new_line;
-      put ("Demaquillant : ");
-      put (tab_capa_prod (D), 3);
-      new_line;
-      put ("Creme visage : ");
-      put (tab_capa_prod (CV), 3);
-      new_line;
-      put ("Gel douche : ");
-      put (tab_capa_prod (GD), 3);
-      new_line;
-      put ("Lait corporel : ");
-      put (tab_capa_prod (LC), 3);
-      new_line;
+      put ("       | Lotion tonique |");
+      put (tab_capa_prod (LT), 2);
+      put_line ("|");
+      put_line ("       |----------------|--|");
+      put ("       | Demaquillant   |");
+      put (tab_capa_prod (D), 2);
+      put_line ("|");
+      put_line ("       |----------------|--|");
+      put ("       | Creme visage   |");
+      put (tab_capa_prod (CV), 2);
+      put_line ("|");
+      put_line ("       |----------------|--|");
+      put ("       | Gel douche     |");
+      put (tab_capa_prod (GD), 2);
+      put_line ("|");
+      put_line ("       |----------------|--|");
+      put ("       | Lait corporel  |");
+      put (tab_capa_prod (LC), 2);
+      put_line ("|");
    end visu_tab_capa_prod;
 
    --Affichage d'un lot
