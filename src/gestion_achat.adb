@@ -177,7 +177,8 @@ package body gestion_achat is
                  (tab_commande (i).nom_client, tab_client, achat.prix);
 
                sup_commande (tab_commande (i));
-
+            else
+               tab_commande (i).attente := tab_commande (i).attente + 1;
             end if;
          end if;
       end loop;
@@ -259,11 +260,13 @@ package body gestion_achat is
    begin
 
       for i in tab_com'range loop
-         for j in tab_com (i).tab_compo_com'range loop
-            if tab_com (i).tab_compo_com (j) > 0 then
-               chiff_aff := chiff_aff + tab_com (i).tab_compo_com (j);
-            end if;
-         end loop;
+         if tab_com (i).num_com /= -1 then
+            for j in tab_com (i).tab_compo_com'range loop
+               if tab_com (i).tab_compo_com (j) > 0 then
+                  chiff_aff := chiff_aff + tab_com (i).tab_compo_com (j);
+               end if;
+            end loop;
+         end if;
       end loop;
 
       if exists ("archive_achat") then
@@ -334,7 +337,19 @@ package body gestion_achat is
 
          close (archive);
 
-         moy := moy / n;
+         --Evite la division par zéro
+         if n > 0 then
+
+            --Calcul de la moyenne
+            moy := moy / n;
+
+            --Affichage de la moyenne
+            put ("Attente moyenne : ");
+            put (moy, 3);
+            put_line (" jour(s)");
+         else
+            put_line ("Aucune archive d'achat");
+         end if;
       else
          put_line ("Aucune archive d'achat");
       end if;

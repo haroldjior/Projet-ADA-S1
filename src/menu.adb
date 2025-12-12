@@ -46,6 +46,7 @@ begin
    ini_tab_mois (tab_mois, liste_mois);
    init_tab_capa_prod (tab_capa_prod);
    init_tab_lot (tab_lot);
+   init_tab_stock (tab_stock);
 
    --Saisie de la date du jour
    put_line ("===== Date du jour =====");
@@ -341,8 +342,8 @@ begin
          when 'E'    =>
             loop
                put_line ("===== Sauvegarde / Restauration =====");
-               put_line ("A : Sauvegarde");
-               put_line ("B : Restauration");
+               put_line ("A : Sauvegarde des donnnees");
+               put_line ("B : Restauration des donnees");
                put_line ("R : Retour au menu principal");
                new_line;
                put ("Votre choix : ");
@@ -371,7 +372,12 @@ begin
             end loop;
 
          when 'F'    =>
+            put_line ("===== Passage au lendemain =====");
             lendemain (date, tab_mois);
+            put ("Date du jour : ");
+            affichage_date (date);
+            new_line;
+            new_line;
 
          when others =>
             put_line

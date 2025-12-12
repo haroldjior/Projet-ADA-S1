@@ -1,7 +1,7 @@
 package outils is
 
    --Type pour le nom du client
-   subtype T_nom_client is string (1 .. 100);
+   subtype T_nom_client is string (1 .. 20);
 
    --Record qui lie le nom du client et sa taille
    type client is record

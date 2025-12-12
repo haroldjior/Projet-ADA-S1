@@ -12,9 +12,6 @@ use ada.text_io,
     gestion_lot,
     outils;
 
---a faire : finir la procedure nouv_commande, comprendre comment faire la procedure annul_commande
-
-
 package body gestion_commande is
 
    --Affichage d'une commande T_commande, utilisé dans visu_tab_commande et visu_com_attente
@@ -64,12 +61,7 @@ package body gestion_commande is
       saisie_nom_client (nom_cli);
 
       --Vérification si le client est dans le registre
-      for i in tab_client'range loop
-         if tab_client (i).nom_du_Client = nom_cli then
-            existe := true;
-            exit;
-         end if;
-      end loop;
+      existe := recherche_client (tab_client, nom_cli.nom_client);
 
       if existe then
          --Recherche de la première case vide
@@ -124,8 +116,24 @@ package body gestion_commande is
 
    --Annulation d'une commande
    procedure annul_commande (tab_commande : in out T_tab_commande) is
+      num    : integer := 0;
+      trouve : Boolean := false;
    begin
-      null;
+      put ("Numero de commande : ");
+      get (num);
+      skip_line;
+
+      for i in tab_commande'range loop
+         if tab_commande (i).num_com = num then
+            tab_commande (i).num_com := -1;
+            trouve := true;
+            exit;
+         end if;
+      end loop;
+
+      if not trouve then
+         put_line ("Commande non trouvee");
+      end if;
    end annul_commande;
 
    --Visualisation du registre des commandes

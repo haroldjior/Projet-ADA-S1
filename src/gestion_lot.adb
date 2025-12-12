@@ -186,7 +186,8 @@ package body gestion_lot is
 
    --Supression d'un lot basé sur son numéro de lot
    procedure sup_lot_num (tab_lot : in out T_tab_lot) is
-      n : integer;
+      n      : integer;
+      trouve : boolean := false;
    begin
       loop
          begin
@@ -197,12 +198,14 @@ package body gestion_lot is
                if tab_lot (i).num_lot = n then
                   tab_lot (i).num_lot := 0;
                   tab_lot (i).stock := -1;
-               elsif (tab_lot (i).num_lot > 0) and (tab_lot (i).num_lot /= n)
-               then
-                  put_line
-                    ("Destruction impossible, le numéro de lot saisie n'existe pas ou plus");
+                  trouve := true;
+                  put_line ("Lot supprime avec succes !");
+                  exit;
                end if;
             end loop;
+            if not trouve then
+               put_line ("Ce numero de lot n'existe pas");
+            end if;
             exit when n > 0;
          exception
             when ada.IO_Exceptions.Data_Error =>

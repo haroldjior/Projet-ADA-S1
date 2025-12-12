@@ -17,7 +17,7 @@ package body outils is
          x := 0;
 
          --Vérification si le nom commence ou fini par un espace
-         if (s (s'First) = ' ') or (s (s'Last) = ' ') then
+         if (s (s'First) = ' ') or (s (k) = ' ') then
             x := x + 1;
          end if;
 
@@ -28,12 +28,17 @@ package body outils is
             end if;
 
             --Verification si le nom ne contient pas deux espaces consécutifs
-            if (s (i) /= s (s'First)) and (s (i) /= s (s'First)) then
+            if (i > 1) and (i < k) then
                if (s (i) = ' ') and ((s (i - 1) = ' ') or s (i + 1) = ' ') then
                   x := x + 1;
                end if;
             end if;
          end loop;
+
+         --Verification si le nombre de caractère entré est superieur à 1
+         if k <= 1 then
+            x := x + 1;
+         end if;
 
          --Enregistrement du nom si il ne contient aucune erreur
          if x = 0 then

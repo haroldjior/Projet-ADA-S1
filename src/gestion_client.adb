@@ -1,9 +1,9 @@
 with ada.text_io,
      ada.integer_text_io,
      ada.IO_Exceptions,
-     ada.characters.handling,
-     outils;
-use ada.text_io, ada.integer_text_io, ada.characters.handling, outils;
+     outils,
+     ada.characters.Handling;
+use ada.text_io, ada.integer_text_io, outils, ada.characters.Handling;
 
 package body gestion_client is
 
@@ -18,18 +18,8 @@ package body gestion_client is
       saisie_nom_client (c);
       new_line;
 
-      --Recherhche de la première case vide
-      while not (trouve) loop
-         n := n + 1;
-         if n > nb_C then
-            trouve := true;
-         elsif (A (n).nb_com = -1) then
-            trouve := true;
-            x := n;
-         end if;
-      end loop;
-
       --Vérification que le nom du client n'existe pas
+      --  existe := recherche_client (A, c.nom_Client);
       for i in A'range loop
          if A (i).nom_du_Client = c then
             existe := true;
@@ -38,47 +28,51 @@ package body gestion_client is
       end loop;
 
       --Enregistrement du client dans le registre
-      begin
-         if not (existe) then
+      if not (existe) then
+
+         for i in A'range loop
+            if A (i).nb_com = -1 then
+               x := i;
+               trouve := true;
+               exit;
+            end if;
+         end loop;
+
+         if trouve then
             A (x).nom_du_Client.nom_Client := to_lower (c.nom_Client);
-            A (x).nom_du_Client.k := c.k;
+            A (x).nom_du_Client.k := C.k;
             A (x).nb_com := 0;
             put_line ("Le client a bien ete ajoute");
          else
-            put_line ("Ce nom existe deja");
+            put_line ("Le registre est plein");
          end if;
-      exception
-         when Constraint_Error =>
-            put_line ("Nombre maximum de client atteint");
-      end;
+      else
+         put_line ("Ce nom existe deja");
+      end if;
 
    end ajout_client;
 
    --Suppression d'un client du registre de client
    procedure sup_client (tab_client : in out T_tab_client) is
-      s      : T_nom_client;
-      k      : integer := 0;
+      nom    : client;
       existe : Boolean := false;
    begin
-      put ("Nom du client a supprimer : ");
-      Get_Line (s, k);
-      new_line;
-      for i in tab_client'Range loop
-         if s (1 .. k)
-           = tab_client (i).nom_du_Client.nom_Client
-               (1 .. tab_client (i).nom_du_Client.k)
-         then
-            existe := true;
+      saisie_nom_client (nom);
+      for i in tab_client'range loop
+         existe := recherche_client (tab_client, nom.nom_Client);
+         if existe then
             tab_client (i).nb_com := -1;
             tab_client (i).fact := 0;
             tab_client (i).montant_achat := 0;
             tab_client (i).nom_du_Client.nom_Client := (others => ' ');
             tab_client (i).nom_du_Client.k := 0;
-            put_line ("Le client a bien été supprimé");
+            put_line ("Le client a bien ete supprime");
+            exit;
          end if;
       end loop;
-      if not (existe) then
-         put_line ("Le client n'existe pas dans le registre");
+
+      if not existe then
+         put ("Le client n'est pas dans le registre");
       end if;
    end sup_client;
 
@@ -105,7 +99,7 @@ package body gestion_client is
                begin
                   Get (somme);
                   new_line;
-                  exit when somme in Natural;
+                  exit when somme > 0;
                exception
                   when Constraint_Error =>
                      skip_line;
@@ -163,5 +157,19 @@ package body gestion_client is
          end if;
       end loop;
    end visu_sans_commande_attente;
+
+   function recherche_client
+     (tab_client : T_tab_client; nom_client : T_nom_client) return boolean
+   is
+      existe : boolean := false;
+   begin
+      for i in tab_client'range loop
+         if tab_client (i).nom_du_Client.nom_Client = nom_Client then
+            existe := true;
+            exit;
+         end if;
+      end loop;
+      return existe;
+   end recherche_client;
 
 end gestion_client;

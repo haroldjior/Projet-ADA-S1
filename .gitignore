@@ -1,10 +1,8 @@
+bin/*
 obj/*
-bin/test.exe
 .vscode/settings.json
-bin/test
 ada_deps.py
 dependencies.dot
 dependencies.html
 dependencies.png
-bin/*
 src/test.adb
