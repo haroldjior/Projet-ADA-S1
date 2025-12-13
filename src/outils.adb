@@ -12,8 +12,13 @@ package body outils is
 
       --Saisie du nom du client
       loop
-         put ("Nom du client : ");
-         get_line (s, k);
+         loop
+            put ("Nom du client : ");
+            get_line (s, k);
+            exit when k > 0;
+            put ("/!\ Erreur : la saisie du nom ne peut pas etre vide");
+         end loop;
+
          x := 0;
 
          --Vérification si le nom commence ou fini par un espace
@@ -34,11 +39,6 @@ package body outils is
                end if;
             end if;
          end loop;
-
-         --Verification si le nombre de caractère entré est superieur à 1
-         if k <= 1 then
-            x := x + 1;
-         end if;
 
          --Enregistrement du nom si il ne contient aucune erreur
          if x = 0 then

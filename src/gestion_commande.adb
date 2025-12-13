@@ -100,10 +100,9 @@ package body gestion_commande is
                      skip_line;
                      exit when tab_commande (x).tab_compo_com (i)'Valid;
                   exception
-                     when Constraint_Error =>
+                     when Ada.IO_Exceptions.data_error | Constraint_Error =>
                         skip_line;
-                        put
-                          ("Nombre d'exemplaires invalide, entrer un entier naturel");
+                        put ("/!\ Erreur, saisie invalide : entrer un entier");
                         new_line;
                   end;
                end loop;
@@ -133,9 +132,18 @@ package body gestion_commande is
       num    : integer := 0;
       trouve : Boolean := false;
    begin
-      put ("Numero de commande : ");
-      get (num);
-      skip_line;
+      loop
+         begin
+            put ("Numero de commande : ");
+            get (num);
+            skip_line;
+            exit when num'valid;
+         exception
+            when Ada.IO_Exceptions.data_error =>
+               skip_line;
+               put ("/!\ Erreur de saisie : entrer un entier positif");
+         end;
+      end loop;
 
       for i in tab_commande'range loop
          if tab_commande (i).num_com = num then
@@ -181,11 +189,13 @@ package body gestion_commande is
    begin
       saisie_produit (prod);
       for i in tab_commande'range loop
-         for j in tab_commande (i).tab_compo_com'range loop
-            if (prod = j) and (tab_commande (i).tab_compo_com (j) > 0) then
-               affichage_commande (tab_commande (i));
-            end if;
-         end loop;
+         if tab_commande (i).num_com /= -1 then
+            for j in tab_commande (i).tab_compo_com'range loop
+               if (prod = j) and (tab_commande (i).tab_compo_com (j) > 0) then
+                  affichage_commande (tab_commande (i));
+               end if;
+            end loop;
+         end if;
       end loop;
    end visu_com_attente_produit;
 

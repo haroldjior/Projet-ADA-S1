@@ -30,31 +30,77 @@ package body gestion_lot is
    procedure saisie_tab_capa_prod (tab_capa_prod : in out T_tab_produit) is
       produit : T_produit;
    begin
-      produit := LT;
-      affichage_produit (produit);
-      put (" : ");
-      get (tab_capa_prod (LT));
-      skip_line;
-      produit := D;
-      affichage_produit (produit);
-      put (" : ");
-      get (tab_capa_prod (D));
-      skip_line;
-      produit := CV;
-      affichage_produit (produit);
-      put (" : ");
-      get (tab_capa_prod (CV));
-      skip_line;
-      produit := GD;
-      affichage_produit (produit);
-      put (" : ");
-      get (tab_capa_prod (GD));
-      skip_line;
-      produit := LC;
-      affichage_produit (produit);
-      put (" : ");
-      get (tab_capa_prod (LC));
-      skip_line;
+      loop
+         begin
+            produit := LT;
+            affichage_produit (produit);
+            put (" : ");
+            get (tab_capa_prod (LT));
+            skip_line;
+            exit when tab_capa_prod (LT)'Valid;
+         exception
+            when Data_Error | Constraint_Error =>
+               skip_line;
+               put_line ("/!\ Saisie invalide, entrez un entier");
+         end;
+      end loop;
+
+      loop
+         begin
+            produit := D;
+            affichage_produit (produit);
+            put (" : ");
+            get (tab_capa_prod (D));
+            skip_line;
+            exit when tab_capa_prod (D)'Valid;
+         exception
+            when Data_Error | Constraint_Error =>
+               skip_line;
+               put_line ("/!\ Saisie invalide, entrez un entier");
+         end;
+      end loop;
+      loop
+         begin
+            produit := CV;
+            affichage_produit (produit);
+            put (" : ");
+            get (tab_capa_prod (CV));
+            skip_line;
+            exit when tab_capa_prod (CV)'Valid;
+         exception
+            when Data_Error | Constraint_Error =>
+               skip_line;
+               put_line ("/!\ Saisie invalide, entrez un entier");
+         end;
+      end loop;
+      loop
+         begin
+            produit := GD;
+            affichage_produit (produit);
+            put (" : ");
+            get (tab_capa_prod (GD));
+            skip_line;
+            exit when tab_capa_prod (GD)'Valid;
+         exception
+            when Data_Error | Constraint_Error =>
+               skip_line;
+               put_line ("/!\ Saisie invalide, entrez un entier");
+         end;
+      end loop;
+      loop
+         begin
+            produit := LC;
+            affichage_produit (produit);
+            put (" : ");
+            get (tab_capa_prod (LC));
+            skip_line;
+            exit when tab_capa_prod (LC)'Valid;
+         exception
+            when Data_Error | Constraint_Error =>
+               skip_line;
+               put_line ("/!\ Saisie invalide, entrez un entier");
+         end;
+      end loop;
    end saisie_tab_capa_prod;
 
    procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_produit) is

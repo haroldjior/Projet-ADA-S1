@@ -67,7 +67,7 @@ package body gestion_client is
             tab_client (x).montant_achat := 0;
             tab_client (x).nom_du_Client.nom_Client := (others => ' ');
             tab_client (x).nom_du_Client.k := 0;
-            put_line ("Le client a bien ete supprime");  
+            put_line ("Le client a bien ete supprime");
          else
             if tab_client (x).nb_com > 0 then
                put_line ("Suppression impossible : commande en attente");
@@ -86,47 +86,40 @@ package body gestion_client is
    --Enregistrement d'un règlement
    procedure reglement (tab_client : in out T_tab_client) is
       s      : T_nom_client;
-      k      : integer := 0;
+      x      : integer := 0;
       somme  : natural;
       existe : boolean := false;
+      nom    : client;
    begin
       put ("Nom du client : ");
-      Get_Line (s, k);
-      for i in tab_client'Range loop
-         if s (1 .. k)
-           = tab_client (i).nom_du_Client.nom_Client
-               (1 .. tab_client (i).nom_du_Client.k)
-         then
-            put ("Dette de ce client : ");
-            put (tab_client (i).fact, 4);
-            New_Line;
-            existe := true;
-            loop
-               put ("Montant que le client veut regler : ");
-               begin
-                  Get (somme);
-                  new_line;
-                  exit when somme > 0;
-               exception
-                  when Constraint_Error =>
-                     skip_line;
-                     put_line ("Erreur, le montant doit être positif");
-               end;
-            end loop;
-            if somme > tab_client (i).fact then
-               put ("Erreur, montant trop eleve");
+      saisie_nom_client (nom);
+      recherche_client (tab_client, nom.nom_Client, existe, x);
+      if existe then
+         put ("Dette de ce client : ");
+         put (tab_client (x).fact, 4);
+         New_Line;
+         loop
+            put ("Montant que le client veut regler : ");
+            begin
+               Get (somme);
                new_line;
-            else
-               tab_client (i).fact := tab_client (i).fact - somme;
-               tab_client (i).montant_achat :=
-                 tab_client (i).montant_achat + somme;
-            end if;
+               exit when somme > 0;
+            exception
+               when Ada.IO_Exceptions.Data_Error | Constraint_Error =>
+                  skip_line;
+                  put_line ("/!\ Erreur de saisie : entrer un entier positif");
+            end;
+         end loop;
+         if somme > tab_client (x).fact then
+            put ("/!\ Erreur, le montant est superieur a la dette du client");
+            new_line;
+         else
+            tab_client (x).fact := tab_client (x).fact - somme;
          end if;
-      end loop;
-
-      if not (existe) then
-         put_line ("Le client n'existe pas dans le registre");
+      else
+         put_line ("/!\ Erreur : le client n'existe pas dans le registre");
       end if;
+
    end reglement;
 
    --Visualisation du registre de clients
