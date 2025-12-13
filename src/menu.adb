@@ -44,13 +44,15 @@ procedure menu is
 begin
    --Initialisation de ce qui est nécéssaire
    ini_tab_mois (tab_mois, liste_mois);
-   init_tab_capa_prod (tab_capa_prod);
    init_tab_lot (tab_lot);
    init_tab_stock (tab_stock);
 
    --Saisie de la date du jour
    put_line ("===== Date du jour =====");
    saisie_date (date, tab_mois);
+   new_line;
+   put_line ("===== Saisie des capacites de production =====");
+   saisie_tab_capa_prod (tab_capa_prod);
    new_line;
 
    --Menu principal
@@ -230,6 +232,12 @@ begin
                      visu_tab_client (tab_client);
                      new_line;
 
+                  when 'E'    =>
+                     put_line
+                       ("===== Clients sans commandes en attentes =====");
+                     visu_sans_commande_attente (tab_client);
+                     new_line;
+
                   when others =>
                      put_line
                        ("Choix non propose, veuillez choisir une des options disponibles");
@@ -349,6 +357,7 @@ begin
                put_line ("===== Sauvegarde / Restauration =====");
                put_line ("A : Sauvegarde des donnnees");
                put_line ("B : Restauration des donnees");
+               put_line ("C : Restauration des donnees des US");
                put_line ("R : Retour au menu principal");
                new_line;
                put ("Votre choix : ");
@@ -369,6 +378,13 @@ begin
                        (tab_lot, tab_client, tab_commande, tab_capa_prod);
                      new_line;
 
+                  when 'C'    =>
+                     put_line ("===== Donnees des US =====");
+                     restauration_US
+                       (tab_lot, tab_client, tab_commande, tab_capa_prod);
+                     maj_tab_stock (tab_lot, tab_stock);
+                     new_line;
+
                   when others =>
                      put_line
                        ("Choix non propose, veuillez choisir une des options disponibles");
@@ -379,6 +395,8 @@ begin
          when 'F'    =>
             put_line ("===== Passage au lendemain =====");
             lendemain (date, tab_mois);
+            livraison
+              (tab_commande, tab_stock, date, tab_lot, tab_client, tab_mois);
             put ("Date du jour : ");
             affichage_date (date);
             new_line;

@@ -25,7 +25,7 @@ package gestion_commande is
    procedure nouv_commande
      (tab_commande : in out T_tab_commande;
       date         : in T_date;
-      tab_client   : in T_tab_client);
+      tab_client   : in out T_tab_client);
 
    --Annulation d'une commande
    procedure annul_commande (tab_commande : in out T_tab_commande);

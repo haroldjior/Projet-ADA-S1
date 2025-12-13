@@ -48,66 +48,80 @@ package body gestion_commande is
    procedure nouv_commande
      (tab_commande : in out T_tab_commande;
       date         : in T_date;
-      tab_client   : in T_tab_client)
+      tab_client   : in out T_tab_client)
    is
       --ajouter T_tab_client en paramètre in
-      x       : integer;
-      ncom    : integer := 0;
-      nom_cli : client;
-      existe  : boolean := false;
+      x, ncom, indice  : integer := 0;
+      nom_cli          : client;
+      existe, possible : boolean := false;
    begin
 
       --Saisie du nom client
       saisie_nom_client (nom_cli);
 
       --Vérification si le client est dans le registre
-      existe := recherche_client (tab_client, nom_cli.nom_client);
+      recherche_client (tab_client, nom_cli.nom_client, existe, indice);
 
       if existe then
-         --Recherche de la première case vide
-         for i in tab_commande'range loop
-            if tab_commande (i).num_com = -1 then
-               x := i;
-            end if;
-         end loop;
 
-         --Recherche du plus haut numero de commande
-         for i in tab_commande'range loop
-            if tab_commande (i).num_com > ncom then
-               ncom := tab_commande (i).num_com;
-            end if;
-         end loop;
+         --Verification si le client n'a pas déjà 3 commandes en attentes
+         if (tab_client (indice).nb_com < 3) then
+            possible := true;
+         end if;
 
-         --Enregistrement du numéro de commande
-         tab_commande (x).num_com := ncom + 1;
-
-         --Enregistrement du nom du client
-         tab_commande (x).nom_client := nom_cli;
-
-         --Enregistrement de la composition de la commande
-         for i in T_tab_produit'range loop
-            loop
-               affichage_produit (i);
-               put (" : ");
-               begin
-                  get (tab_commande (x).tab_compo_com (i));
-                  skip_line;
-                  exit when tab_commande (x).tab_compo_com (i)'Valid;
-               exception
-                  when Constraint_Error =>
-                     skip_line;
-                     put
-                       ("Nombre d'exemplaires invalide, entrer un entier naturel");
-                     new_line;
-               end;
+         if possible then
+            --Recherche de la première case vide
+            for i in tab_commande'range loop
+               if tab_commande (i).num_com = -1 then
+                  x := i;
+               end if;
             end loop;
-         end loop;
 
-         --Enregistrement de la date de la commande
-         tab_commande (x).date_com := date;
+            --Recherche du plus haut numero de commande
+            for i in tab_commande'range loop
+               if tab_commande (i).num_com > ncom then
+                  ncom := tab_commande (i).num_com;
+               end if;
+            end loop;
 
-         --Initialisation du temps d'attente (en jour)
-         tab_commande (x).attente := 0;
+            --Enregistrement du numéro de commande
+            tab_commande (x).num_com := ncom + 1;
+
+            --Enregistrement du nom du client
+            tab_commande (x).nom_client := nom_cli;
+
+            --Enregistrement de la composition de la commande
+            for i in T_tab_produit'range loop
+               loop
+                  affichage_produit (i);
+                  put (" : ");
+                  begin
+                     get (tab_commande (x).tab_compo_com (i));
+                     skip_line;
+                     exit when tab_commande (x).tab_compo_com (i)'Valid;
+                  exception
+                     when Constraint_Error =>
+                        skip_line;
+                        put
+                          ("Nombre d'exemplaires invalide, entrer un entier naturel");
+                        new_line;
+                  end;
+               end loop;
+            end loop;
+
+            --Enregistrement de la date de la commande
+            tab_commande (x).date_com := date;
+
+            --Initialisation du temps d'attente (en jour)
+            tab_commande (x).attente := 0;
+
+            --Incrémentation du nombre de commande du client
+            tab_client (indice).nb_com := tab_client (indice).nb_com + 1;
+
+         else
+            put_line
+              ("Commande impossible, le client a deja 3 commandes en attentes");
+         end if;
 
       else
          put_line ("Ce client n'existe pas dans le registre");

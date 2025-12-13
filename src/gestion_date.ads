@@ -44,4 +44,9 @@ package gestion_date is
    --Passage au lendemain avec rebouclage des mois
    procedure lendemain (date : in out T_date; tab_mois : in T_tab_mois);
 
+   --Calcule du nombre de jour entre deux dates
+   function diff_date
+     (date_debut : T_date; date_fin : T_date; tab_mois : T_tab_mois)
+      return integer;
+
 end gestion_date;

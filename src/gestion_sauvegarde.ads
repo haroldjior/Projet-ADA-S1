@@ -24,4 +24,10 @@ package gestion_sauvegarde is
       com  : out T_tab_commande;
       capa : out T_tab_produit);
 
+   procedure restauration_US
+     (lot  : out T_tab_lot;
+      cli  : out T_tab_client;
+      com  : out T_tab_commande;
+      capa : out T_tab_produit);
+
 end gestion_sauvegarde;

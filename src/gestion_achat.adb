@@ -68,6 +68,14 @@ package body gestion_achat is
       i_compo : integer := 0;
    begin
 
+      --Recherche de la premiere case vide de tab_compo_achat
+      for i in tab_compo_achat'range loop
+         if tab_compo_achat (i).num_lot = -1 then
+            i_compo := i;
+            exit;
+         end if;
+      end loop;
+
       for i in tab_lot'range loop
          if (tab_lot (i).stock /= -1)
            and then (qt_rest > 0)
@@ -84,10 +92,10 @@ package body gestion_achat is
             tab_lot (i).stock := tab_lot (i).stock - qt_prel;
             tab_lot (i).nb_vendu := tab_lot (i).nb_vendu + qt_prel;
 
-            i_compo := i_compo + 1;
             tab_compo_achat (i_compo).produit := produit;
             tab_compo_achat (i_compo).num_lot := tab_lot (i).num_lot;
             tab_compo_achat (i_compo).nb_ex := qt_prel;
+            i_compo := i_compo + 1;
 
             cout := cout + (qt_prel * tab_lot (i).prix_ex);
 
@@ -126,6 +134,7 @@ package body gestion_achat is
             tab_client (i).nb_com := tab_client (i).nb_com - 1;
             tab_client (i).montant_achat :=
               tab_client (i).montant_achat + montant;
+            tab_client (i).fact := tab_client (i).fact + montant;
             exit;
          end if;
       end loop;
@@ -136,7 +145,8 @@ package body gestion_achat is
       tab_stock    : T_tab_produit;
       date         : in T_date;
       tab_lot      : in out T_tab_lot;
-      tab_client   : in out T_tab_client)
+      tab_client   : in out T_tab_client;
+      tab_mois     : in T_tab_mois)
    is
       achat    : T_achat;
       possible : Boolean;
@@ -155,10 +165,15 @@ package body gestion_achat is
             possible := stock_suffisant (tab_commande (i), tab_stock);
             if possible then
                cout := 0;
+               for j in achat.tab_compo_achat'range loop
+                  achat.tab_compo_achat (j).nb_ex := 0;
+                  achat.tab_compo_achat (j).num_lot := -1;
+               end loop;
                achat.nom_client := tab_commande (i).nom_client;
                achat.date_liv := date;
                for prod in T_produit loop
                   if tab_commande (i).tab_compo_com (prod) > 0 then
+
                      prelever_produit
                        (prod,
                         tab_commande (i).tab_compo_com (prod),
@@ -178,10 +193,13 @@ package body gestion_achat is
 
                sup_commande (tab_commande (i));
             else
-               tab_commande (i).attente := tab_commande (i).attente + 1;
+               tab_commande (i).attente :=
+                 diff_date (tab_commande (i).date_com, date, tab_mois);
             end if;
          end if;
       end loop;
+
+      sup_lot_vide (tab_lot);
 
       close (archive);
 

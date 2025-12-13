@@ -28,7 +28,10 @@ package gestion_client is
    --Visualisation des clients sans commandes en attentes
    procedure visu_sans_commande_attente (tab_client : in out T_tab_client);
 
-   function recherche_client
-     (tab_client : T_tab_client; nom_client : T_nom_client) return boolean;
+   procedure recherche_client
+     (tab_client : in T_tab_client;
+      nom_client : in T_nom_client;
+      existe     : out boolean;
+      indice     : out integer);
 
 end gestion_client;

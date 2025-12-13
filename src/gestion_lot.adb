@@ -26,15 +26,36 @@ package body gestion_lot is
       end loop;
    end init_tab_lot;
 
-   --Initialisation du tableau des capacités de production
-   procedure init_tab_capa_prod (tab_capa_prod : in out T_tab_produit) is
+   --Saisie des capacités de production
+   procedure saisie_tab_capa_prod (tab_capa_prod : in out T_tab_produit) is
+      produit : T_produit;
    begin
-      tab_capa_prod (LT) := 10;
-      tab_capa_prod (D) := 8;
-      tab_capa_prod (CV) := 12;
-      tab_capa_prod (GD) := 10;
-      tab_capa_prod (LC) := 12;
-   end init_tab_capa_prod;
+      produit := LT;
+      affichage_produit (produit);
+      put (" : ");
+      get (tab_capa_prod (LT));
+      skip_line;
+      produit := D;
+      affichage_produit (produit);
+      put (" : ");
+      get (tab_capa_prod (D));
+      skip_line;
+      produit := CV;
+      affichage_produit (produit);
+      put (" : ");
+      get (tab_capa_prod (CV));
+      skip_line;
+      produit := GD;
+      affichage_produit (produit);
+      put (" : ");
+      get (tab_capa_prod (GD));
+      skip_line;
+      produit := LC;
+      affichage_produit (produit);
+      put (" : ");
+      get (tab_capa_prod (LC));
+      skip_line;
+   end saisie_tab_capa_prod;
 
    procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_produit) is
    begin
@@ -251,7 +272,7 @@ package body gestion_lot is
       end loop;
    end sup_lot_date;
 
-   --Modification des capacités de produciton
+   --Modification des capacités de production
    procedure modif_capa_prod (tab_capa_prod : in out T_tab_produit) is
       produit : T_produit;
       nv_capa : Natural;

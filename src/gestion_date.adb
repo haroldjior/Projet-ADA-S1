@@ -156,4 +156,21 @@ package body gestion_date is
 
    end lendemain;
 
+   function diff_date
+     (date_debut : T_date; date_fin : T_date; tab_mois : T_tab_mois)
+      return integer
+   is
+      diff     : integer := 0;
+      date_tmp : T_date;
+   begin
+
+      date_tmp := date_debut;
+      while date_tmp /= date_fin loop
+         lendemain (date_tmp, tab_mois);
+         diff := diff + 1;
+      end loop;
+
+      return (diff);
+   end diff_date;
+
 end gestion_date;

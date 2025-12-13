@@ -56,20 +56,27 @@ package body gestion_client is
    procedure sup_client (tab_client : in out T_tab_client) is
       nom    : client;
       existe : Boolean := false;
+      x      : integer := 0;
    begin
       saisie_nom_client (nom);
-      for i in tab_client'range loop
-         existe := recherche_client (tab_client, nom.nom_Client);
-         if existe then
-            tab_client (i).nb_com := -1;
-            tab_client (i).fact := 0;
-            tab_client (i).montant_achat := 0;
-            tab_client (i).nom_du_Client.nom_Client := (others => ' ');
-            tab_client (i).nom_du_Client.k := 0;
-            put_line ("Le client a bien ete supprime");
-            exit;
+      recherche_client (tab_client, nom.nom_Client, existe, x);
+      if existe then
+         if (tab_client (x).nb_com = 0) and (tab_client (x).fact = 0) then
+            tab_client (x).nb_com := -1;
+            tab_client (x).fact := 0;
+            tab_client (x).montant_achat := 0;
+            tab_client (x).nom_du_Client.nom_Client := (others => ' ');
+            tab_client (x).nom_du_Client.k := 0;
+            put_line ("Le client a bien ete supprime");  
+         else
+            if tab_client (x).nb_com > 0 then
+               put_line ("Suppression impossible : commande en attente");
+            end if;
+            if tab_client (x).fact > 0 then
+               put_line ("Suppression impossible : facture non reglee");
+            end if;
          end if;
-      end loop;
+      end if;
 
       if not existe then
          put ("Le client n'est pas dans le registre");
@@ -158,18 +165,21 @@ package body gestion_client is
       end loop;
    end visu_sans_commande_attente;
 
-   function recherche_client
-     (tab_client : T_tab_client; nom_client : T_nom_client) return boolean
-   is
-      existe : boolean := false;
+   procedure recherche_client
+     (tab_client : in T_tab_client;
+      nom_client : in T_nom_client;
+      existe     : out boolean;
+      indice     : out integer) is
    begin
+      indice := 0;
+      existe := false;
       for i in tab_client'range loop
          if tab_client (i).nom_du_Client.nom_Client = nom_Client then
             existe := true;
+            indice := i;
             exit;
          end if;
       end loop;
-      return existe;
    end recherche_client;
 
 end gestion_client;

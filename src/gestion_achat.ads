@@ -43,6 +43,13 @@ package gestion_achat is
    function stock_suffisant
      (com : T_commande; tab_stock : T_tab_produit) return boolean;
 
+   procedure prelever_produit
+     (produit         : in T_produit;
+      qt_voulue       : in integer;
+      tab_lot         : in out T_tab_lot;
+      tab_compo_achat : in out T_tab_compo_achat;
+      cout            : in out integer);
+
    procedure sup_lot_vide (tab_lot : in out T_tab_lot);
 
    procedure sup_commande (com : in out T_commande);
@@ -55,7 +62,8 @@ package gestion_achat is
       tab_stock    : T_tab_produit;
       date         : in T_date;
       tab_lot      : in out T_tab_lot;
-      tab_client   : in out T_tab_client);
+      tab_client   : in out T_tab_client;
+      tab_mois     : in T_tab_mois);
 
    procedure visu_achat (achat : in T_achat);
 
