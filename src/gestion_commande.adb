@@ -18,28 +18,19 @@ package body gestion_commande is
    procedure affichage_commande (com : in T_commande) is
    begin
 
-      put ("Numero de commande : ");
+      put ("|     ");
       put (com.num_com, 2);
-      new_line;
-
-      put ("Nom du client : ");
-      put (com.nom_client.nom_Client (1 .. com.nom_client.k));
-      new_line;
-
-      put_line ("Composition de la commande :");
+      put (" | ");
+      put (com.nom_client.nom_Client (1 .. 20));
+      put (" | ");
       for j in com.tab_compo_com'range loop
-         affichage_produit (j);
-         put (" : ");
-         put (com.tab_compo_com (j), 3);
-         new_line;
+         put (com.tab_compo_com (j), 2);
+         put (" | ");
       end loop;
-
-      put ("Date de la commande : ");
       affichage_date (com.date_com);
-      new_line;
-
-      put ("Nombre de jour d'attente : ");
-      put (com.attente, 3);
+      put (" | ");
+      put (com.attente, 2);
+      put (" jour(s) |");
       new_line;
 
    end affichage_commande;
@@ -118,12 +109,14 @@ package body gestion_commande is
             tab_client (indice).nb_com := tab_client (indice).nb_com + 1;
 
          else
+            new_line;
             put_line
               ("Commande impossible, le client a deja 3 commandes en attentes");
          end if;
 
       else
-         put_line ("Ce client n'existe pas dans le registre");
+         new_line;
+         put_line ("/!\ Erreur : client inexistant");
       end if;
    end nouv_commande;
 
@@ -154,49 +147,152 @@ package body gestion_commande is
       end loop;
 
       if not trouve then
-         put_line ("Commande non trouvee");
+         new_line;
+         put_line ("/!\ Erreur : commande inexistante");
+      else
+         new_line;
+         put_line ("La commande a bien ete supprimee !");
       end if;
    end annul_commande;
 
    --Visualisation du registre des commandes
    procedure visu_tab_commande (tab_commande : in T_tab_commande) is
+      vide : boolean := true;
    begin
+
+      --Verification que le registre n'est pas vide
       for i in tab_commande'range loop
          if tab_commande (i).num_com /= -1 then
-            affichage_commande (tab_commande (i));
+            vide := false;
+            exit;
          end if;
       end loop;
+
+      --Si le registre n'est pas vide, on l'affiche
+      if not vide then
+         put_line
+           ("| Numero | Client               | Composition            | Date       | Attente    |");
+         put_line
+           ("|        |                      | LT |  D | CV | GD | LC |            |            |");
+         put_line
+           ("|--------|----------------------|----|----|----|----|----|------------|------------|");
+         for i in tab_commande'range loop
+            if tab_commande (i).num_com /= -1 then
+               affichage_commande (tab_commande (i));
+            end if;
+         end loop;
+
+      --Si le registre est vide, on affiche un message informatif
+
+      else
+         put_line ("Aucune commandes enregistrees");
+      end if;
+
    end visu_tab_commande;
 
    --Visualisation des commandes en attente pour un client donné
-   procedure visu_com_attente_client (tab_commande : in T_tab_commande) is
-      cli : client;
+   procedure visu_com_attente_client
+     (tab_commande : in T_tab_commande; tab_client : in T_tab_client)
+   is
+      cli    : client;
+      vide   : Boolean := true;
+      existe : boolean := false;
+      indice : integer;
    begin
+
+      --Saisie du nom du client
       saisie_nom_client (cli);
-      for i in tab_commande'range loop
-         if tab_commande (i).nom_client.nom_Client
-              (1 .. tab_commande (i).nom_client.k)
-           = cli.nom_Client (1 .. cli.k)
-         then
-            affichage_commande (tab_commande (i));
+
+      --Verification si le client existe dans le registre
+      recherche_client (tab_client, cli.nom_Client, existe, indice);
+
+      if existe then
+         --Verification si le client a une commande en attente
+         for i in tab_commande'range loop
+            if (tab_commande (i).nom_client = cli)
+              and then (tab_commande (i).num_com /= -1)
+            then
+               vide := false;
+               exit;
+            end if;
+         end loop;
+
+         --Si le client a au moins une commande en attente, on l'affiche
+         if not vide then
+            new_line;
+            put_line
+              ("| Numero | Client               | Composition            | Date       | Attente    |");
+            put_line
+              ("|        |                      | LT |  D | CV | GD | LC |            |            |");
+            put_line
+              ("|--------|----------------------|----|----|----|----|----|------------|------------|");
+            for i in tab_commande'range loop
+               if tab_commande (i).nom_client.nom_Client
+                    (1 .. tab_commande (i).nom_client.k)
+                 = cli.nom_Client (1 .. cli.k)
+               then
+                  affichage_commande (tab_commande (i));
+               end if;
+            end loop;
+
+         --Si le client n'a pas de commande en attente, on affiche un message informatif
+
+         else
+            new_line;
+            put_line ("Aucune commandes enregistrees pour ce client");
          end if;
-      end loop;
+
+      --Si le client n'existe pas dans le registe, on affiche un message d'erreur
+
+      else
+         new_line;
+         put_line ("/!\ Erreur : client inexistant");
+      end if;
+
    end visu_com_attente_client;
 
    --Visualisation des commandes en attente pour un produit donné
    procedure visu_com_attente_produit (tab_commande : in T_tab_commande) is
       prod : T_produit;
+      vide : boolean := true;
    begin
+
+      --Saisie du produit
       saisie_produit (prod);
+
       for i in tab_commande'range loop
          if tab_commande (i).num_com /= -1 then
             for j in tab_commande (i).tab_compo_com'range loop
                if (prod = j) and (tab_commande (i).tab_compo_com (j) > 0) then
-                  affichage_commande (tab_commande (i));
+                  vide := false;
+                  exit;
                end if;
             end loop;
          end if;
       end loop;
+
+      if not vide then
+         new_line;
+         put_line
+           ("| Numero | Client               | Composition            | Date       | Attente    |");
+         put_line
+           ("|        |                      | LT |  D | CV | GD | LC |            |            |");
+         put_line
+           ("|--------|----------------------|----|----|----|----|----|------------|------------|");
+         for i in tab_commande'range loop
+            if tab_commande (i).num_com /= -1 then
+               for j in tab_commande (i).tab_compo_com'range loop
+                  if (prod = j) and (tab_commande (i).tab_compo_com (j) > 0)
+                  then
+                     affichage_commande (tab_commande (i));
+                  end if;
+               end loop;
+            end if;
+         end loop;
+      else
+         new_line;
+         put_line ("Aucune commande en attente pour ce produit");
+      end if;
    end visu_com_attente_produit;
 
    --Visualisation de tous les clients ayant commandé un produit donné
@@ -206,12 +302,14 @@ package body gestion_commande is
    begin
       saisie_produit (prod);
       put_line ("Clients ayant commandes ce produit :");
+      new_line;
       for i in tab_commande'range loop
          for j in tab_compo_com'range loop
             if (prod = j)
               and (tab_commande (i).tab_compo_com (j) > 0)
               and (tab_commande (i).num_com /= -1)
             then
+               put ("=> ");
                affichage_nom_client (tab_commande (i).nom_client);
                new_line;
             end if;

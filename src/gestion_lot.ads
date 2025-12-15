@@ -8,12 +8,12 @@ package gestion_lot is
    --Record qui lit le numéro de lot, le type de produit du lot, sa date de fabrication,
    --le nombre d'exemplaires en stock, le nombre d'exemplaires déjà vendus, et le prix d'un exemplaire
    type T_lot is record
-      num_lot  : integer := 0;
+      num_lot  : Natural := 0;
       produit  : T_produit;
       date_fab : T_date;
       stock    : integer := -1;
-      nb_vendu : integer := 0;
-      prix_ex  : Integer := 0;
+      nb_vendu : Natural := 0;
+      prix_ex  : Natural := 0;
    end record;
 
    --Tableau de T_lot de taille nb_lot
@@ -58,7 +58,8 @@ package gestion_lot is
       tab_mois : in out T_tab_mois);
 
    --Modification des capacités de produciton
-   procedure modif_capa_prod (tab_capa_prod : in out T_tab_produit);
+   procedure modif_capa_prod_par_produit
+     (tab_capa_prod : in out T_tab_produit);
 
    --Visualisation du registre des lots
    procedure visu_tab_lot (tab_lot : in T_tab_lot);

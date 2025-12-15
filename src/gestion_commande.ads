@@ -34,7 +34,8 @@ package gestion_commande is
    procedure visu_tab_commande (tab_commande : in T_tab_commande);
 
    --Visualisation des commandes en attente pour un client donné
-   procedure visu_com_attente_client (tab_commande : in T_tab_commande);
+   procedure visu_com_attente_client
+     (tab_commande : in T_tab_commande; tab_client : in T_tab_client);
 
    --Visualisation des commandes en attente pour un produit donné
    procedure visu_com_attente_produit (tab_commande : in T_tab_commande);

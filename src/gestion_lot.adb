@@ -21,8 +21,8 @@ package body gestion_lot is
          tab_lot (i).date_fab.jour := 1;
          tab_lot (i).date_fab.annee := 1;
          tab_lot (i).stock := -1;
-         tab_lot (i).nb_vendu := -1;
-         tab_lot (i).prix_ex := -1;
+         tab_lot (i).nb_vendu := 0;
+         tab_lot (i).prix_ex := 0;
       end loop;
    end init_tab_lot;
 
@@ -41,7 +41,9 @@ package body gestion_lot is
          exception
             when Data_Error | Constraint_Error =>
                skip_line;
+               new_line;
                put_line ("/!\ Saisie invalide, entrez un entier");
+               new_line;
          end;
       end loop;
 
@@ -56,7 +58,9 @@ package body gestion_lot is
          exception
             when Data_Error | Constraint_Error =>
                skip_line;
+               new_line;
                put_line ("/!\ Saisie invalide, entrez un entier");
+               new_line;
          end;
       end loop;
       loop
@@ -70,7 +74,9 @@ package body gestion_lot is
          exception
             when Data_Error | Constraint_Error =>
                skip_line;
+               new_line;
                put_line ("/!\ Saisie invalide, entrez un entier");
+               new_line;
          end;
       end loop;
       loop
@@ -84,7 +90,9 @@ package body gestion_lot is
          exception
             when Data_Error | Constraint_Error =>
                skip_line;
+               new_line;
                put_line ("/!\ Saisie invalide, entrez un entier");
+               new_line;
          end;
       end loop;
       loop
@@ -98,56 +106,62 @@ package body gestion_lot is
          exception
             when Data_Error | Constraint_Error =>
                skip_line;
+               new_line;
                put_line ("/!\ Saisie invalide, entrez un entier");
+               new_line;
          end;
       end loop;
    end saisie_tab_capa_prod;
 
    procedure visu_tab_capa_prod (tab_capa_prod : in T_tab_produit) is
    begin
-      put ("       | Lotion tonique |");
+      put_line ("| Produit        |Capa|");
+      put_line ("|----------------|----|");
+      put ("| Lotion tonique | ");
       put (tab_capa_prod (LT), 2);
-      put_line ("|");
-      put_line ("       |----------------|--|");
-      put ("       | Demaquillant   |");
+      put_line (" |");
+      put ("| Demaquillant   | ");
       put (tab_capa_prod (D), 2);
-      put_line ("|");
-      put_line ("       |----------------|--|");
-      put ("       | Creme visage   |");
+      put_line (" |");
+      put ("| Creme visage   | ");
       put (tab_capa_prod (CV), 2);
-      put_line ("|");
-      put_line ("       |----------------|--|");
-      put ("       | Gel douche     |");
+      put_line (" |");
+      put ("| Gel douche     | ");
       put (tab_capa_prod (GD), 2);
-      put_line ("|");
-      put_line ("       |----------------|--|");
-      put ("       | Lait corporel  |");
+      put_line (" |");
+      put ("| Lait corporel  | ");
       put (tab_capa_prod (LC), 2);
-      put_line ("|");
+      put_line (" |");
    end visu_tab_capa_prod;
 
    --Affichage d'un lot
    procedure affichage_lot (lot : in T_lot) is
       tmp : T_produit;
    begin
-      put ("Numero de lot : ");
-      put (lot.num_lot, 1);
-      new_line;
-      put ("Nature du produit : ");
+      put ("| ");
+      put (lot.num_lot, 2);
+      put (" | ");
       tmp := lot.produit;
       affichage_produit (tmp);
-      new_line;
-      put ("Date de fabrication :");
+      if tmp = GD then
+         put ("     | ");
+      elsif tmp = LC then
+         put ("  | ");
+      elsif tmp = LT then
+         put (" | ");
+      elsif tmp = D then
+         put ("   | ");
+      elsif tmp = CV then
+         put ("   | ");
+      end if;
       affichage_date (lot.date_fab);
-      new_line;
-      put ("Nombre d'exemplaires en stock : ");
+      put ("  |  ");
       put (lot.stock, 3);
-      new_line;
-      put ("Nombre d'exemplaires vendus : ");
+      put ("  |  ");
       put (lot.nb_vendu, 3);
-      new_line;
-      put ("Prix d'un exemplaire : ");
+      put ("   |   ");
       put (lot.prix_ex, 2);
+      put (" |");
       new_line;
    end affichage_lot;
 
@@ -235,22 +249,17 @@ package body gestion_lot is
                get (tab_lot (x).prix_ex);
                skip_line;
                exit when tab_lot (x).prix_ex >= 0;
-               if tab_lot (x).prix_ex < 0 then
-                  Put_Line
-                    ("/!\ Valeur de prix invalide, veuillez entrer un entier positif");
-               end if;
             exception
                when ada.IO_Exceptions.Data_Error =>
                   Skip_Line;
-                  Put_Line
-                    ("/!\ Valeur de prix invalide, veuillez entrer un entier positif");
+                  Put_Line ("/!\ Erreur : entrer un entier positif");
             end;
          end loop;
          new_line;
          maj_tab_stock (tab_lot, tab_stock);
          put_line ("Lot ajoute avec succes !");
       elsif trouve = 0 then
-         put_line ("Nombre de lots maximum atteint");
+         put_line ("/!\ Erreur : nombre de lots maximum atteint");
       end if;
 
    end nouv_lot;
@@ -265,6 +274,7 @@ package body gestion_lot is
             put ("Numéro du lot : ");
             get (n);
             skip_line;
+            new_line;
             for i in tab_lot'range loop
                if tab_lot (i).num_lot = n then
                   tab_lot (i).num_lot := 0;
@@ -275,14 +285,13 @@ package body gestion_lot is
                end if;
             end loop;
             if not trouve then
-               put_line ("Ce numero de lot n'existe pas");
+               put_line ("/!\ Erreur : numero de lot inexistant");
             end if;
             exit when n > 0;
          exception
             when ada.IO_Exceptions.Data_Error =>
                skip_line;
-               Put_Line
-                 ("/!\ Saisie invalide, veuillez entrer un entier positif");
+               Put_Line ("/!\ Erreur : entrer un entier positif");
          end;
       end loop;
    end sup_lot_num;
@@ -291,35 +300,50 @@ package body gestion_lot is
    procedure sup_lot_date
      (tab_lot  : in out T_tab_lot;
       date     : out T_date;
-      tab_mois : in out T_tab_mois) is
+      tab_mois : in out T_tab_mois)
+   is
+      lot_sup : integer := 0;
    begin
       saisie_date (date, tab_mois);
+      new_line;
       for i in tab_lot'range loop
          if tab_lot (i).stock /= -1 then
             if tab_lot (i).date_fab.annee < date.annee then
                tab_lot (i).num_lot := 0;
                tab_lot (i).stock := -1;
+               lot_sup := lot_sup + 1;
             elsif tab_lot (i).date_fab.annee = date.annee then
                if T_liste_mois'pos (tab_lot (i).date_fab.mois)
                  < T_liste_mois'pos (date.mois)
                then
                   tab_lot (i).num_lot := 0;
                   tab_lot (i).stock := -1;
+                  lot_sup := lot_sup + 1;
                elsif T_liste_mois'pos (tab_lot (i).date_fab.mois)
                  = T_liste_mois'pos (date.mois)
                then
                   if tab_lot (i).date_fab.jour < date.jour then
                      tab_lot (i).num_lot := 0;
                      tab_lot (i).stock := -1;
+                     lot_sup := lot_sup + 1;
                   end if;
                end if;
             end if;
          end if;
       end loop;
+
+      --Affichage du nombre de lots supprimés
+      if lot_sup = 0 then
+         put_line ("Aucun lots supprimes");
+      else
+         put (lot_sup, 2);
+         put_line (" lot(s) supprime(s)");
+      end if;
    end sup_lot_date;
 
-   --Modification des capacités de production
-   procedure modif_capa_prod (tab_capa_prod : in out T_tab_produit) is
+   --Modification des capacités de production par produit
+   procedure modif_capa_prod_par_produit (tab_capa_prod : in out T_tab_produit)
+   is
       produit : T_produit;
       nv_capa : Natural;
       trouve  : Boolean := false;
@@ -352,38 +376,86 @@ package body gestion_lot is
       else
          put_line ("Aucun lot existant de ce type de produit");
       end if;
-   end modif_capa_prod;
+   end modif_capa_prod_par_produit;
 
    --Visualisation du registre des lots
    procedure visu_tab_lot (tab_lot : in T_tab_lot) is
-      tmp : T_lot;
+      tmp  : T_lot;
+      vide : boolean := true;
    begin
+
+      --Verification si le tableau de lot n'est pas vide
       for i in tab_lot'range loop
          if tab_lot (i).stock /= -1 then
-            tmp := tab_lot (i);
-            affichage_lot (tmp);
+            vide := false;
          end if;
       end loop;
+
+      --Si tableau non vide, on l'affiche
+      if not vide then
+         put_line
+           ("| N° | Produit        | Fabrication | Stock | Vendus | Prix |");
+         put_line
+           ("|----|----------------|-------------|-------|--------|------|");
+         for i in tab_lot'range loop
+            if tab_lot (i).stock /= -1 then
+               tmp := tab_lot (i);
+               affichage_lot (tmp);
+            end if;
+         end loop;
+
+      --Si tableau vide, on affiche un message informatif
+
+      else
+         put_line ("Aucun lot enregistre");
+      end if;
+
    end visu_tab_lot;
 
    --Visualisation des lots pour un produit donné
    procedure visu_lot_produit (tab_lot : in T_tab_lot) is
-      prod     : T_produit;
-      lot      : T_lot;
-      en_stock : Boolean := false;
+      prod           : T_produit;
+      lot            : T_lot;
+      en_stock, vide : Boolean := true;
    begin
+
+      --Saisie du produit a visualise
       saisie_produit (prod);
-      new_line;
+
+      --Verification si le tableau n'est pas vide
       for i in tab_lot'range loop
-         if (tab_lot (i).stock /= -1) and (tab_lot (i).produit = prod) then
-            lot := tab_lot (i);
-            affichage_lot (lot);
-            en_stock := True;
+         if tab_lot (i).stock /= -1 then
+            vide := false;
          end if;
       end loop;
-      if not (en_stock) then
-         put_line ("Produit non en stock");
+
+      --Si le tableau n'est pas vide, on l'affiche
+      if not vide then
+         new_line;
+         put_line
+           ("| N° | Produit        | Fabrication | Stock | Vendus | Prix |");
+         put_line
+           ("|----|----------------|-------------|-------|--------|------|");
+         for i in tab_lot'range loop
+            if (tab_lot (i).stock /= -1) and (tab_lot (i).produit = prod) then
+               lot := tab_lot (i);
+               affichage_lot (lot);
+               en_stock := True;
+            end if;
+         end loop;
+
+         --Si le produit n'est pas présent dans le tableau on affiche un message informatif
+         if not (en_stock) then
+            new_line;
+            put_line ("Produit non en stock");
+         end if;
+
+      --Si le tableau est vide, on affiche un message informatif
+
+      else
+         put_line ("Aucun lot enregistre");
       end if;
+
    end visu_lot_produit;
 
    --Visualisation des produits manquants en stock
@@ -415,9 +487,12 @@ package body gestion_lot is
       end loop;
 
       --Affichage des produits manquants en stock
+      new_line;
       Put_Line ("Produits manquants en stock : ");
+      new_line;
       for i in tab_visu'range loop
          if not tab_visu (i).visu_stock then
+            put ("=> ");
             affichage_produit (tab_visu (i).visu_prod);
             new_line;
          end if;

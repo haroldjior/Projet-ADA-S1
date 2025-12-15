@@ -5,7 +5,7 @@ package body outils is
 
    --Saisie du nom du client, avec gestion de la validité du nom
    procedure saisie_nom_client (C : in out client) is
-      s : T_nom_client;
+      s : T_nom_client := (others => ' ');
       k : integer := 0;
       x : integer := 0;
    begin
@@ -15,6 +15,7 @@ package body outils is
          loop
             put ("Nom du client : ");
             get_line (s, k);
+            s := to_lower (s);
             exit when k > 0;
             put ("/!\ Erreur : la saisie du nom ne peut pas etre vide");
          end loop;
@@ -46,8 +47,7 @@ package body outils is
             C.k := k;
             exit;
          else
-            put ("Le nom du client n'est pas valide");
-            new_line;
+            put_line ("Le nom du client n'est pas valide");
          end if;
       end loop;
    end saisie_nom_client;
@@ -81,7 +81,9 @@ package body outils is
             produit := T_produit'val (4);
          else
             valide := false;
+            new_line;
             Put_Line ("/!\ Nom de produit invalide");
+            new_line;
          end if;
          exit when valide;
       end loop;

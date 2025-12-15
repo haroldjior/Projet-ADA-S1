@@ -207,47 +207,100 @@ package body gestion_achat is
 
    procedure visu_achat (achat : in T_achat) is
    begin
-      put ("Nom du client : ");
-      affichage_nom_client (achat.nom_client);
-      new_line;
-      put ("Date de livraison : ");
+      put_line
+        ("|----------------------|------------|---------|--------|--------------------|");
+      put ("| ");
+      put (achat.nom_client.nom_Client (1 .. 20));
+      put (" | ");
       affichage_date (achat.date_liv);
-      new_line;
-      put_line ("Composition de l'achat :");
+      put (" |      ");
+      put (achat.tps_ecoule, 2);
+      put (" |    ");
+      put (achat.prix, 3);
+      put (" | ");
       for i in achat.tab_compo_achat'range loop
          if achat.tab_compo_achat (i).num_lot /= -1 then
-            put ("Produit : ");
-            affichage_produit (achat.tab_compo_achat (i).produit);
-            put ("Numero de lot : ");
-            put (achat.tab_compo_achat (i).num_lot);
-            new_line;
-            put ("Nombre d'exemplaire : ");
-            put (achat.tab_compo_achat (i).nb_ex);
-            new_line;
+            if i = 1 then
+               if achat.tab_compo_achat (i).produit = D then
+                  put (T_produit'image (achat.tab_compo_achat (i).produit));
+                  put ("  - lot ");
+               else
+                  put (T_produit'image (achat.tab_compo_achat (i).produit));
+                  put (" - lot ");
+               end if;
+               put (achat.tab_compo_achat (i).num_lot, 1);
+               put (" :");
+               put (achat.tab_compo_achat (i).nb_ex, 2);
+               put (" ex  |");
+               new_line;
+            elsif i > 1 then
+               put
+                 ("|                      |            |         |        | ");
+               if achat.tab_compo_achat (i).produit = D then
+                  put (T_produit'image (achat.tab_compo_achat (i).produit));
+                  put ("  - lot ");
+               else
+                  put (T_produit'image (achat.tab_compo_achat (i).produit));
+                  put (" - lot ");
+               end if;
+               put (achat.tab_compo_achat (i).num_lot, 1);
+               put (" :");
+               put (achat.tab_compo_achat (i).nb_ex, 2);
+               put (" ex  |");
+               new_line;
+            end if;
          end if;
       end loop;
 
    end visu_achat;
 
    procedure visu_achat_client (tab_client : T_tab_client) is
-      archive : archive_achat.file_type;
-      nom     : client;
-      achat   : T_achat;
+      archive        : archive_achat.file_type;
+      nom            : client;
+      achat          : T_achat;
+      existe         : boolean := false;
+      indice         : integer := 0;
+      archive_client : Boolean := false;
    begin
 
+      --Verification qu'un registre d'achat est creer
       if exists ("archive_achat") then
-         open (archive, in_file, "archive_achat");
-         read (archive, achat);
          saisie_nom_client (nom);
-         for i in tab_client'range loop
-            if (tab_client (i).nb_com /= -1)
-              and then (tab_client (i).nom_du_Client = nom)
-            then
-               visu_achat (achat);
+
+         --Verification si le client existe dans le registre
+         recherche_client (tab_client, nom.nom_Client, existe, indice);
+         if existe then
+            open (archive, in_file, "archive_achat");
+            while not (end_of_file (archive)) loop
+               read (archive, achat);
+               if tab_client (indice).nom_du_Client = achat.nom_client then
+                  if not archive_client then
+                     put_line
+                       ("| Client               | Livraison  | Attente | Cout   | Provenance         |");
+                     archive_client := true;
+                  end if;
+                  visu_achat (achat);
+               end if;
+            end loop;
+            close (archive);
+
+            --Si le client n'a pas d'archive d'achat, on affiche un message informatif
+            if not archive_client then
+               new_line;
+               put_line ("Aucune archive achat pour ce client");
             end if;
-         end loop;
-         close (archive);
+
+         --Si le client n'existe pas dans le registre, on affiche un message d'erreur
+
+         else
+            new_line;
+            put_line ("/!\ Erreur : client inexistant");
+         end if;
+
+      --Si il n'existe pas d'archive d'achat, on affiche un message informatif
+
       else
+         new_line;
          put_line ("Aucune archive d'achat");
       end if;
 
@@ -259,6 +312,8 @@ package body gestion_achat is
    begin
 
       if exists ("archive_achat") then
+         put_line
+           ("| Client               | Livraison  | Attente | Cout   | Provenance         |");
          open (archive, in_file, "archive_achat");
          while not (end_of_file (archive)) loop
             read (archive, achat);
@@ -267,6 +322,7 @@ package body gestion_achat is
          close (archive);
       else
          put ("Aucune archive d'achat");
+         new_line;
       end if;
 
    end visu_archive_achat;
@@ -293,13 +349,14 @@ package body gestion_achat is
             read (archive, achat);
             chiff_aff := chiff_aff + achat.prix;
          end loop;
-         put ("Chiffre d'affaire : ");
-         put (chiff_aff);
-         new_line;
          close (archive);
-      else
-         put_line ("Aucune archive d'achat");
       end if;
+
+      put ("Chiffre d'affaire : ");
+      put (chiff_aff, 5);
+      put (" euros");
+      new_line;
+
    end visu_chiffre_affaire;
 
    procedure visu_nb_ex_vendu is
@@ -326,12 +383,15 @@ package body gestion_achat is
             end loop;
          end loop;
 
+         put_line ("| Produit        | Nb ex |");
+         put_line ("|----------------|-------|");
+
          for i in tab_ex_vendu'range loop
-            put ("Produit : ");
-            affichage_produit (i);
+            put ("| Lotion tonique |");
+            put (" |    ");
+            put (tab_ex_vendu (i), 2);
+            put (" |");
             new_line;
-            put ("Nombre d'exemplaire : ");
-            put (tab_ex_vendu (i));
          end loop;
 
          close (archive);

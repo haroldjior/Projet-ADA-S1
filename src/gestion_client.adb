@@ -39,15 +39,15 @@ package body gestion_client is
          end loop;
 
          if trouve then
-            A (x).nom_du_Client.nom_Client := to_lower (c.nom_Client);
+            A (x).nom_du_Client.nom_Client := c.nom_Client;
             A (x).nom_du_Client.k := C.k;
             A (x).nb_com := 0;
-            put_line ("Le client a bien ete ajoute");
+            put_line ("Le client a bien ete ajoute !");
          else
-            put_line ("Le registre est plein");
+            put_line ("/!\ Erreur : le registre est plein");
          end if;
       else
-         put_line ("Ce nom existe deja");
+         put_line ("/!\ Erreur : ce client existe deja");
       end if;
 
    end ajout_client;
@@ -59,6 +59,7 @@ package body gestion_client is
       x      : integer := 0;
    begin
       saisie_nom_client (nom);
+      new_line;
       recherche_client (tab_client, nom.nom_Client, existe, x);
       if existe then
          if (tab_client (x).nb_com = 0) and (tab_client (x).fact = 0) then
@@ -67,19 +68,19 @@ package body gestion_client is
             tab_client (x).montant_achat := 0;
             tab_client (x).nom_du_Client.nom_Client := (others => ' ');
             tab_client (x).nom_du_Client.k := 0;
-            put_line ("Le client a bien ete supprime");
+            put_line ("Le client a bien ete supprime !");
          else
             if tab_client (x).nb_com > 0 then
-               put_line ("Suppression impossible : commande en attente");
+               put_line ("/!\ Suppression impossible : commande en attente");
             end if;
             if tab_client (x).fact > 0 then
-               put_line ("Suppression impossible : facture non reglee");
+               put_line ("/!\ Suppression impossible : facture non reglee");
             end if;
          end if;
       end if;
 
       if not existe then
-         put ("Le client n'est pas dans le registre");
+         put_line ("/!\ Erreur : client inexistant");
       end if;
    end sup_client;
 
@@ -91,7 +92,6 @@ package body gestion_client is
       existe : boolean := false;
       nom    : client;
    begin
-      put ("Nom du client : ");
       saisie_nom_client (nom);
       recherche_client (tab_client, nom.nom_Client, existe, x);
       if existe then
@@ -117,6 +117,7 @@ package body gestion_client is
             tab_client (x).fact := tab_client (x).fact - somme;
          end if;
       else
+         new_line;
          put_line ("/!\ Erreur : le client n'existe pas dans le registre");
       end if;
 
@@ -125,22 +126,19 @@ package body gestion_client is
    --Visualisation du registre de clients
    procedure visu_tab_client (tab_client : in out T_tab_client) is
    begin
+      put_line ("| Nom du client        | Nb com | Dette | Achats |");
+      put_line ("|----------------------|--------|-------|--------|");
       for i in tab_client'Range loop
          if tab_client (i).nb_com /= -1 then
-            put ("Nom du client : ");
-            put
-              (tab_client (i).nom_du_Client.nom_Client
-                 (1 .. tab_client (i).nom_du_Client.k));
-            new_line;
-            put ("Le nombre de ses commandes est : ");
+            put ("| ");
+            put (tab_client (i).nom_du_Client.nom_Client (1 .. 20));
+            put (" |   ");
             put (tab_client (i).nb_com, 3);
-            new_line;
-            put ("Le montant de sa dette est de : ");
+            put ("  |  ");
             put (tab_client (i).fact, 3);
-            new_line;
-            put ("Le montant de ses achats deja realise est de : ");
+            put ("  |   ");
             put (tab_client (i).montant_achat, 3);
-            new_line;
+            put_line ("  |");
          end if;
       end loop;
    end visu_tab_client;
@@ -149,6 +147,7 @@ package body gestion_client is
    procedure visu_sans_commande_attente (tab_client : in out T_tab_client) is
    begin
       put_line ("Client(s) sans commandes en attente :");
+      new_line;
       for i in tab_client'Range loop
          if tab_client (i).nb_com /= -1 and (tab_client (i).nb_com) = 0 then
             put ("=> ");
