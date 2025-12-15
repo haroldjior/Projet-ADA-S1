@@ -127,14 +127,15 @@ begin
                            when 'A'    =>
                               put_line ("===== Suppression d'un lot =====");
                               new_line;
-                              sup_lot_num (tab_lot);
+                              sup_lot_num (tab_lot, tab_stock);
                               new_line;
 
                            when 'B'    =>
                               put_line
                                 ("===== Suppression de tous les lots =====");
                               new_line;
-                              sup_lot_date (tab_lot, date, tab_mois);
+                              sup_lot_date
+                                (tab_lot, date, tab_mois, tab_stock);
                               new_line;
 
                            when others =>
@@ -345,7 +346,7 @@ begin
                   when 'B'    =>
                      put_line ("===== Annulation d'une commande =====");
                      new_line;
-                     annul_commande (tab_commande);
+                     annul_commande (tab_commande, tab_client);
                      new_line;
 
                   when 'C'    =>
@@ -486,11 +487,14 @@ begin
 
          when 'E'    =>
             loop
-               put_line ("===== Sauvegarde / Restauration =====");
-               put_line ("A : Sauvegarde des donnnees");
-               put_line ("B : Restauration des donnees");
-               put_line ("C : Restauration des donnees des US");
-               put_line ("R : Retour au menu principal");
+               put_line (" ===== Sauvegarde / Restauration =====");
+               put_line (" _____________________________________");
+               put_line ("|                                     |");
+               put_line ("| A : Sauvegarde des donnnees         |");
+               put_line ("| B : Restauration des donnees        |");
+               put_line ("| C : Restauration des donnees des US |");
+               put_line ("| R : Retour au menu principal        |");
+               put_line ("|_____________________________________|");
                new_line;
                put ("Votre choix : ");
                get (choix_sauv);
@@ -503,14 +507,23 @@ begin
                      put_line ("===== Sauvegarde =====");
                      new_line;
                      sauvegarde_donnees
-                       (tab_lot, tab_client, tab_commande, tab_capa_prod);
+                       (tab_lot,
+                        tab_client,
+                        tab_commande,
+                        tab_capa_prod,
+                        date);
                      new_line;
 
                   when 'B'    =>
                      put_line ("===== Restauration =====");
                      new_line;
                      restauration
-                       (tab_lot, tab_client, tab_commande, tab_capa_prod);
+                       (tab_lot,
+                        tab_client,
+                        tab_commande,
+                        tab_capa_prod,
+                        date,
+                        tab_mois);
                      new_line;
 
                   when 'C'    =>
@@ -532,11 +545,12 @@ begin
             put_line ("===== Passage au lendemain =====");
             new_line;
             lendemain (date, tab_mois);
-            livraison
-              (tab_commande, tab_stock, date, tab_lot, tab_client, tab_mois);
             put ("Date du jour : ");
             affichage_date (date);
             new_line;
+            new_line;
+            livraison
+              (tab_commande, tab_stock, date, tab_lot, tab_client, tab_mois);
             new_line;
 
          when others =>

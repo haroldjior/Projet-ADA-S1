@@ -49,13 +49,15 @@ package gestion_lot is
      (tab_lot : in T_tab_lot; tab_stock : in out T_tab_produit);
 
    --Supression d'un lot basé sur son numéro de lot
-   procedure sup_lot_num (tab_lot : in out T_tab_lot);
+   procedure sup_lot_num
+     (tab_lot : in out T_tab_lot; tab_stock : in out T_tab_produit);
 
    --Suppression de tous les lots fabriqués avant une date précise
    procedure sup_lot_date
-     (tab_lot  : in out T_tab_lot;
-      date     : out T_date;
-      tab_mois : in out T_tab_mois);
+     (tab_lot   : in out T_tab_lot;
+      date      : out T_date;
+      tab_mois  : in out T_tab_mois;
+      tab_stock : in out T_tab_produit);
 
    --Modification des capacités de produciton
    procedure modif_capa_prod_par_produit

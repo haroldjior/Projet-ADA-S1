@@ -18,25 +18,6 @@ package body gestion_achat is
 
    use archive_achat;
 
-   --Verifie si les stock sont suffisant pour satisfaire une commande
-   function livr_possible
-     (com : T_commande; tab_stock : T_tab_produit) return boolean
-   is
-      possible : boolean;
-   begin
-
-      for i in com.tab_compo_com'range loop
-         for j in T_produit loop
-            if (j = i) and then (com.tab_compo_com (j) <= tab_stock (j)) then
-               possible := true;
-            else
-               possible := false;
-            end if;
-         end loop;
-      end loop;
-      return (possible);
-   end livr_possible;
-
    function stock_suffisant
      (com : T_commande; tab_stock : T_tab_produit) return boolean
    is
@@ -148,10 +129,10 @@ package body gestion_achat is
       tab_client   : in out T_tab_client;
       tab_mois     : in T_tab_mois)
    is
-      achat    : T_achat;
-      possible : Boolean;
-      cout     : integer;
-      archive  : archive_achat.file_type;
+      achat            : T_achat;
+      possible, livree : Boolean := false;
+      cout             : integer;
+      archive          : archive_achat.file_type;
    begin
 
       if exists ("archive_achat") then
@@ -191,6 +172,11 @@ package body gestion_achat is
                maj_client
                  (tab_commande (i).nom_client, tab_client, achat.prix);
 
+               put ("Commande ");
+               put (tab_commande (i).num_com, 2);
+               put_line (" livree !");
+               livree := true;
+
                sup_commande (tab_commande (i));
             else
                tab_commande (i).attente :=
@@ -200,6 +186,10 @@ package body gestion_achat is
       end loop;
 
       sup_lot_vide (tab_lot);
+
+      if not livree then
+         put_line ("Aucune commande livree");
+      end if;
 
       close (archive);
 
@@ -385,14 +375,21 @@ package body gestion_achat is
 
          put_line ("| Produit        | Nb ex |");
          put_line ("|----------------|-------|");
-
-         for i in tab_ex_vendu'range loop
-            put ("| Lotion tonique |");
-            put (" |    ");
-            put (tab_ex_vendu (i), 2);
-            put (" |");
-            new_line;
-         end loop;
+         put ("| Lotion tonique |   ");
+         put (tab_ex_vendu (LT), 3);
+         put_line (" |");
+         put ("| Demaquillant   |   ");
+         put (tab_ex_vendu (D), 3);
+         put_line (" |");
+         put ("| Creme visage   |   ");
+         put (tab_ex_vendu (CV), 3);
+         put_line (" |");
+         put ("| Gel douche     |   ");
+         put (tab_ex_vendu (GD), 3);
+         put_line (" |");
+         put ("| Lait corporel  |   ");
+         put (tab_ex_vendu (LC), 3);
+         put_line (" |");
 
          close (archive);
       else

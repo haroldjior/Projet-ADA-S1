@@ -65,6 +65,7 @@ package body gestion_commande is
             for i in tab_commande'range loop
                if tab_commande (i).num_com = -1 then
                   x := i;
+                  exit;
                end if;
             end loop;
 
@@ -121,7 +122,9 @@ package body gestion_commande is
    end nouv_commande;
 
    --Annulation d'une commande
-   procedure annul_commande (tab_commande : in out T_tab_commande) is
+   procedure annul_commande
+     (tab_commande : in out T_tab_commande; tab_client : in out T_tab_client)
+   is
       num    : integer := 0;
       trouve : Boolean := false;
    begin
@@ -141,6 +144,15 @@ package body gestion_commande is
       for i in tab_commande'range loop
          if tab_commande (i).num_com = num then
             tab_commande (i).num_com := -1;
+            for j in tab_client'range loop
+               if (tab_client (j).nb_com /= -1)
+                 and then (tab_client (j).nom_du_Client
+                           = tab_commande (i).nom_client)
+               then
+                  tab_client (j).nb_com := tab_client (j).nb_com - 1;
+                  exit;
+               end if;
+            end loop;
             trouve := true;
             exit;
          end if;

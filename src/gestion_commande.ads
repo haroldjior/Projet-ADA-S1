@@ -28,7 +28,8 @@ package gestion_commande is
       tab_client   : in out T_tab_client);
 
    --Annulation d'une commande
-   procedure annul_commande (tab_commande : in out T_tab_commande);
+   procedure annul_commande
+     (tab_commande : in out T_tab_commande; tab_client : in out T_tab_client);
 
    --Visualisation du registre des commandes
    procedure visu_tab_commande (tab_commande : in T_tab_commande);

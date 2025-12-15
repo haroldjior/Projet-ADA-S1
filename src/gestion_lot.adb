@@ -178,6 +178,7 @@ package body gestion_lot is
    procedure maj_tab_stock
      (tab_lot : in T_tab_lot; tab_stock : in out T_tab_produit) is
    begin
+      init_tab_stock (tab_stock);
       for i in tab_lot'range loop
          for j in T_produit loop
             if (tab_lot (i).stock /= -1) and then (tab_lot (i).produit = j)
@@ -265,7 +266,9 @@ package body gestion_lot is
    end nouv_lot;
 
    --Supression d'un lot basé sur son numéro de lot
-   procedure sup_lot_num (tab_lot : in out T_tab_lot) is
+   procedure sup_lot_num
+     (tab_lot : in out T_tab_lot; tab_stock : in out T_tab_produit)
+   is
       n      : integer;
       trouve : boolean := false;
    begin
@@ -279,6 +282,7 @@ package body gestion_lot is
                if tab_lot (i).num_lot = n then
                   tab_lot (i).num_lot := 0;
                   tab_lot (i).stock := -1;
+                  maj_tab_stock (tab_lot, tab_stock);
                   trouve := true;
                   put_line ("Lot supprime avec succes !");
                   exit;
@@ -298,9 +302,10 @@ package body gestion_lot is
 
    --Suppression de tous les lots fabriqués avant une date précise
    procedure sup_lot_date
-     (tab_lot  : in out T_tab_lot;
-      date     : out T_date;
-      tab_mois : in out T_tab_mois)
+     (tab_lot   : in out T_tab_lot;
+      date      : out T_date;
+      tab_mois  : in out T_tab_mois;
+      tab_stock : in out T_tab_produit)
    is
       lot_sup : integer := 0;
    begin
@@ -336,6 +341,7 @@ package body gestion_lot is
       if lot_sup = 0 then
          put_line ("Aucun lots supprimes");
       else
+         maj_tab_stock (tab_lot, tab_stock);
          put (lot_sup, 2);
          put_line (" lot(s) supprime(s)");
       end if;

@@ -25,21 +25,21 @@ package body gestion_sauvegarde is
      (lot  : in T_tab_lot;
       cli  : in T_tab_client;
       com  : in T_tab_commande;
-      capa : in T_tab_produit)
+      capa : in T_tab_produit;
+      date : in T_date)
    is
-      --ach  : gestion_achat.T_tab_compo_achat;
-      --prod : gestion_achat.T_tab_compo_achat;
 
       sau : fichier_sauvegarde.file_type;
       S   : T_sauvegarde;
    begin
-      Put_Line ("debut de la sauvegarde");
+      Put_Line ("Sauvegarde des donnees...");
       if exists ("fichier_sauvegarde") then
-         Put_Line ("fichier existant, ouverture");
+         Put_Line ("Fichier existant, ouverture...");
          open (sau, out_file, "fichier_sauvegarde");
       else
-         Put_Line ("fichier inexistant, creation");
+         Put_Line ("Fichier inexistant, creation...");
          create (sau, name => "fichier_sauvegarde");
+         S.sauv_date := date;
       end if;
 
       S.sauv_lot := Lot;
@@ -50,29 +50,57 @@ package body gestion_sauvegarde is
       Write (sau, S);
       Close (sau);
 
+      put_line ("Sauvegarde reussie !");
    end sauvegarde_donnees;
 
    procedure restauration
-     (lot  : out T_tab_lot;
-      cli  : out T_tab_client;
-      com  : out T_tab_commande;
-      capa : out T_tab_produit)
+     (lot      : out T_tab_lot;
+      cli      : out T_tab_client;
+      com      : out T_tab_commande;
+      capa     : out T_tab_produit;
+      date     : in T_date;
+      tab_mois : in T_tab_mois)
    is
       sau : fichier_sauvegarde.file_type;
       S   : T_sauvegarde;
+      ant : boolean := false;
    begin
       if exists ("fichier_sauvegarde") then
-         Put_Line ("fichier existant, restauration donnees");
+
+         Put_Line ("Fichier existant, restauration donnees...");
          open (sau, in_file, "fichier_sauvegarde");
          Read (sau, S);
-         lot := S.sauv_lot;
-         cli := S.sauv_client;
-         capa := S.sauv_capa_prod;
-         com := S.sauv_com;
+
+         if date.annee < S.sauv_date.annee then
+            ant := true;
+         elsif date.annee = S.sauv_date.annee then
+            if T_liste_mois'pos (date.mois)
+              < T_liste_mois'pos (S.sauv_date.mois)
+            then
+               ant := true;
+            elsif T_liste_mois'pos (date.mois)
+              = T_liste_mois'pos (S.sauv_date.mois)
+            then
+               if date.jour < S.sauv_date.jour then
+                  ant := true;
+               end if;
+            end if;
+         end if;
+
+         if not ant then
+            lot := S.sauv_lot;
+            cli := S.sauv_client;
+            capa := S.sauv_capa_prod;
+            com := S.sauv_com;
+         else
+            put_line
+              ("/!\ Erreur : date du jour anterieure a la date de sauvegarde");
+         end if;
+
          Close (sau);
 
       else
-         put_line ("fichier de sauvegarde inexistant");
+         put_line ("/!\ Erreur : fichier de sauvegarde inexistant");
       end if;
 
    end restauration;

@@ -36,10 +36,6 @@ package gestion_achat is
 
    package archive_achat is new Ada.Sequential_IO (T_achat);
 
-   --Verifie si les stock sont suffisant pour satisfaire une commande
-   function livr_possible
-     (com : T_commande; tab_stock : T_tab_produit) return boolean;
-
    function stock_suffisant
      (com : T_commande; tab_stock : T_tab_produit) return boolean;
 
